@@ -1,12 +1,12 @@
 /* ==========================================================================
-   AuraID Studio Pro v4.0 — Network-First Dev & Offline AI Service Worker
+   AuraID Studio Pro v5.0 — Network-First Dev & Offline AI Service Worker
    ========================================================================== */
 
-const CACHE_VERSION = 'auraid-pro-v4.0.0';
+const CACHE_VERSION = 'auraid-pro-v5.0.0';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const CDN_ASSET_CACHE = `${CACHE_VERSION}-cdn`;
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
@@ -36,7 +36,6 @@ self.addEventListener('fetch', (event) => {
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com');
 
-  // Cache-First for heavy ONNX / MediaPipe AI models and fonts
   if (isCdnAsset) {
     event.respondWith(
       caches.open(CDN_ASSET_CACHE).then(async (cache) => {
@@ -56,7 +55,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First for local HTML/CSS/JS so updates on 127.0.0.1:5500 never get stuck!
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.open(APP_SHELL_CACHE).then(async (cache) => {

@@ -3,34 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#050814" />
+  <meta name="theme-color" content="#080c16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>AuraID Studio Pro v4.0 — Shopkeeper AI Passport &amp; Lossless TIFF Studio</title>
+  <title>AuraID Studio Pro v5.0 — Matte Glass Passport, Camera &amp; Zero-Waste TIFF Studio</title>
 
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Cache-busted stylesheet link -->
-  <link rel="stylesheet" href="style.css?v=4.0" />
+  <link rel="stylesheet" href="style.css?v=5.0" />
 
-  <!-- Fast Local MediaPipe Segmentation (Instant Realtime Engine) -->
+  <!-- Local MediaPipe Selfie Segmentation -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.4.1675469240/selfie_segmentation.js" crossorigin="anonymous" defer></script>
 </head>
 <body>
-  <!-- Vibrant Aurora Blobs Behind Translucent Glass UI -->
+  <!-- Soft Ambient Backdrop behind Matte Frosted Glass -->
   <div class="ambient-canvas" aria-hidden="true">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
-    <div class="blob blob-4"></div>
+    <div class="matte-grain"></div>
   </div>
 
   <div class="app-shell">
-    <!-- Top Translucent Glass Header -->
-    <header class="app-header glass-panel">
+    <!-- Top Matte Glass Header -->
+    <header class="app-header matte-glass">
       <div class="brand-group">
         <div class="brand-logo" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
@@ -40,108 +39,124 @@
           </svg>
         </div>
         <div>
-          <h1 class="brand-title">AuraID <span class="badge-pro">SHOPKEEPER v4.0</span></h1>
-          <p class="brand-subtitle">ISNet Deep AI • Top-Row Paper Saver • Lossless TIFF</p>
+          <h1 class="brand-title">AuraID <span class="badge-pro">STUDIO v5.0</span></h1>
+          <p class="brand-subtitle">Live Camera • Realistic Attire • Direct Zero-Waste Print</p>
         </div>
       </div>
 
-      <!-- Workspace Mode Switcher -->
+      <!-- Main Mode Switcher -->
       <nav class="workspace-tabs" role="tablist">
         <button type="button" class="tab-btn active" data-workspace="studio" role="tab" aria-selected="true">
-          <span class="step-dot">1</span> Crop, AI BG &amp; Suit Studio
+          <span class="step-dot">1</span> Edit, BG &amp; Suit Studio
         </button>
         <button type="button" class="tab-btn" data-workspace="print" role="tab" aria-selected="false">
-          <span class="step-dot">2</span> Print Sheet (Top-Row Saver)
+          <span class="step-dot">2</span> Print Sheet (Zero-Waste)
         </button>
       </nav>
 
-      <!-- Header Quick Actions -->
+      <!-- Convenient Quick-Entry Actions (Upload, Live Camera, Direct Print Ready Photo) -->
       <div class="header-actions">
-        <span id="offlineStatusBadge" class="status-pill online">
-          <span class="status-dot"></span> <span id="offlineStatusText">Studio Ready</span>
-        </span>
-
-        <button type="button" id="loadSampleBtn" class="glass-btn" title="Load Studio Sample Portrait">
-          Sample Photo
+        <button type="button" id="openCameraModalBtn" class="glass-btn btn-camera" title="Click Photo Using Live Webcam or Phone Camera">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+          <span>Live Camera</span>
         </button>
 
-        <label for="photoUploadInput" class="glass-btn btn-primary">
+        <label for="directPrintUploadInput" class="glass-btn btn-direct" title="Already have a ready passport photo? Upload directly to Print Sheet without BG removal!">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9" />
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+            <rect x="6" y="14" width="12" height="8" />
+          </svg>
+          <span>Direct Print (Ready Photo)</span>
+        </label>
+        <input type="file" id="directPrintUploadInput" accept="image/*" class="sr-only" />
+
+        <label for="photoUploadInput" class="glass-btn btn-primary" title="Upload Customer Photo for AI BG Removal & Cropping">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
             <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
-          <span>Upload Customer Photo</span>
+          <span>Upload Photo</span>
         </label>
         <input type="file" id="photoUploadInput" accept="image/*" class="sr-only" />
       </div>
     </header>
 
-    <!-- Main Studio Layout (Left Scrollable Controls + Right Interactive Viewport) -->
+    <!-- Main Studio Layout -->
     <main class="app-layout">
-      <!-- LEFT SIDEBAR: Independently Scrollable Translucent Glass Controls -->
-      <aside class="controls-sidebar glass-panel" id="controlsDrawer">
-        <!-- 5-Tab Studio Navigation -->
+      <!-- LEFT SIDEBAR: Matte Frosted Glass Controls -->
+      <aside class="controls-sidebar matte-glass" id="controlsDrawer">
+        <!-- 5 Clear Workflow Tabs -->
         <div class="drawer-section-tabs" id="mobileToolTabs" role="tablist">
-          <button type="button" class="subtab-btn active" data-panel="panel-bg">1. AI Remove BG</button>
-          <button type="button" class="subtab-btn" data-panel="panel-suit">2. Suit / Blazer</button>
-          <button type="button" class="subtab-btn" data-panel="panel-doc">3. Size &amp; Crop</button>
-          <button type="button" class="subtab-btn" data-panel="panel-retouch">4. Retouch/Name</button>
-          <button type="button" class="subtab-btn" data-panel="panel-sheet">5. Print &amp; TIFF</button>
+          <button type="button" class="subtab-btn active" data-panel="panel-bg">1. AI BG</button>
+          <button type="button" class="subtab-btn" data-panel="panel-suit">2. Real Suit</button>
+          <button type="button" class="subtab-btn" data-panel="panel-doc">3. Doc Size</button>
+          <button type="button" class="subtab-btn" data-panel="panel-retouch">4. Border/Edit</button>
+          <button type="button" class="subtab-btn" data-panel="panel-sheet">5. Print/TIFF</button>
         </div>
 
-        <!-- Explicitly Scrollable Inner Container with Visible Scrollbar -->
         <div class="sidebar-scroll" id="sidebarScrollContainer">
 
           <!-- ================================================================
-               TAB 1: DEEP LEARNING AI (ISNet ONNX) + HYBRID LAB BACKGROUND CUTOUT
+               TAB 1: AI BACKGROUND REMOVAL & STUDIO BACKDROP COLORS
                ================================================================ -->
           <section class="tool-section active" id="panel-bg">
             <div class="section-header">
-              <h2>AI Background Removal</h2>
-              <span class="mono-tag" id="bgEngineStatus">Ready</span>
+              <h2>AI Background &amp; Color</h2>
+              <span class="mono-tag" id="bgEngineStatus">AI Ready</span>
             </div>
 
-            <!-- Deep AI One-Click Card -->
+            <!-- Fast Bypass Toggle for Ready Photos -->
+            <div class="sub-card highlight-card">
+              <div class="switch-row">
+                <label for="directReadyModeToggle"><strong>Photo Already Ready?</strong> (Keep Original BG)</label>
+                <input type="checkbox" id="directReadyModeToggle" />
+              </div>
+              <p class="tiny-note">Turn this ON if your uploaded photo already has the right background and you only want to crop or print copies.</p>
+            </div>
+
+            <!-- Deep AI Hair-Strand Cutout Card -->
             <div class="ai-hero-card">
-              <div class="ai-hero-top">
-                <div>
-                  <h3>⚡ Ultra HD Deep Matte AI (ISNet ONNX)</h3>
-                  <p>Runs 2026 state-of-the-art neural hair-strand matting locally in your browser. Zero quality loss.</p>
-                </div>
+              <div>
+                <h3>✨ Ultra-HD Deep AI Cutout (ISNet ONNX)</h3>
+                <p>Best for frizzy hair, complex backgrounds, sarees &amp; glasses.</p>
               </div>
               <button type="button" id="runDeepAiBtn" class="glass-btn btn-primary btn-full">
-                ✨ Run Ultra-HD Deep AI Cutout (Hair &amp; Dress)
+                ⚡ Run Deep AI Hair-Strand Cutout
               </button>
               <div id="deepAiProgressWrap" class="ai-progress-wrap hidden">
                 <div class="ai-progress-bar"><div id="deepAiProgressFill" class="ai-progress-fill"></div></div>
-                <span id="deepAiProgressText" class="ai-progress-text">Loading ONNX Neural Weights...</span>
+                <span id="deepAiProgressText" class="ai-progress-text">Loading Neural Model...</span>
               </div>
             </div>
 
-            <label class="field-label">Instant Cutout Engine Mode</label>
+            <label class="field-label">Cutout Engine Mode</label>
             <div class="segmented-control" id="bgModeTabs">
               <button type="button" class="seg-btn" data-bgmode="none">Original</button>
               <button type="button" class="seg-btn active" data-bgmode="hybrid">AI + LAB Edge</button>
-              <button type="button" class="seg-btn" data-bgmode="deep">Ultra Deep AI</button>
-              <button type="button" class="seg-btn" data-bgmode="flood">Wall Flood</button>
+              <button type="button" class="seg-btn" data-bgmode="deep">Deep AI</button>
+              <button type="button" class="seg-btn" data-bgmode="flood">Wall Key</button>
             </div>
 
-            <!-- Quick-Choose Official Indian Studio Backdrop Colors -->
+            <!-- Standard Indian Studio Backdrop Swatches -->
             <label class="field-label">Quick Studio Backdrop Colors</label>
             <div class="color-swatch-grid" id="bgPresetSwatches">
               <button type="button" class="color-swatch active" data-color="#FFFFFF" style="background:#FFFFFF;" title="Pure White (Passport / Government ID / PAN)"></button>
-              <button type="button" class="color-swatch" data-color="#0052CC" style="background:#0052CC;" title="Shopkeeper Studio Royal Blue"></button>
-              <button type="button" class="color-swatch" data-color="#D0E8FF" style="background:#D0E8FF;" title="Passport Light Sky Blue"></button>
-              <button type="button" class="color-swatch" data-color="#2563EB" style="background:#2563EB;" title="Classic Electric Blue"></button>
+              <button type="button" class="color-swatch" data-color="#0047AB" style="background:#0047AB;" title="Standard Indian Studio Cobalt Blue"></button>
+              <button type="button" class="color-swatch" data-color="#D0E8FF" style="background:#D0E8FF;" title="Light Sky Blue"></button>
+              <button type="button" class="color-swatch" data-color="#2563EB" style="background:#2563EB;" title="Royal Blue"></button>
               <button type="button" class="color-swatch" data-color="#E5E7EB" style="background:#E5E7EB;" title="Official Light Grey"></button>
-              <button type="button" class="color-swatch" data-color="#B91C1C" style="background:#B91C1C;" title="Studio Crimson Red"></button>
-              <button type="button" class="color-swatch" data-color="#0F766E" style="background:#0F766E;" title="Studio Teal"></button>
+              <button type="button" class="color-swatch" data-color="#B91C1C" style="background:#B91C1C;" title="Crimson Red"></button>
+              <button type="button" class="color-swatch" data-color="#0F766E" style="background:#0F766E;" title="Formal Teal"></button>
               <button type="button" class="color-swatch swatch-transparent" data-color="transparent" title="Transparent PNG"></button>
             </div>
 
             <div class="custom-color-row">
-              <label for="customBgColorPicker" class="field-label-inline">Custom Color Picker:</label>
+              <label for="customBgColorPicker" class="field-label-inline">Custom Backdrop Color:</label>
               <div class="color-picker-wrap">
                 <input type="color" id="customBgColorPicker" value="#FFFFFF" />
                 <input type="text" id="customBgHexInput" class="glass-input hex-input" value="#FFFFFF" maxlength="7" />
@@ -149,27 +164,27 @@
             </div>
 
             <div class="switch-row">
-              <label for="bgGradientToggle">3D Studio Radial Vignette Lighting</label>
+              <label for="bgGradientToggle">Subtle Studio Radial Lighting</label>
               <input type="checkbox" id="bgGradientToggle" />
             </div>
 
-            <!-- Edge Refinement Sliders -->
+            <!-- Edge Fine-Tuning -->
             <div class="sub-card">
               <div class="section-header-inline">
-                <span class="field-label">Fine-Tune Hair &amp; Shoulder Edges</span>
+                <span class="field-label">Edge &amp; Wall Color Refinement</span>
                 <button type="button" id="reRunAiBtn" class="link-btn">↻ Re-Scan</button>
               </div>
 
               <div class="btn-row-compact">
                 <button type="button" id="pickBgColorBtn" class="glass-btn btn-sm btn-full">
-                  💧 Click Wall in Photo to Remove Color
+                  💧 Click Background Wall to Sample Color
                 </button>
                 <span id="sampledWallSwatch" class="mini-swatch" title="Sampled Wall Color"></span>
               </div>
 
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>Wall Color Sensitivity (LAB ΔE)</span>
+                  <span>Wall Color Sensitivity (ΔE)</span>
                   <span class="mono-val" id="toleranceValLabel">28</span>
                 </div>
                 <input type="range" id="bgToleranceSlider" min="4" max="95" step="1" value="28" />
@@ -177,42 +192,43 @@
 
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>AI Core Confidence</span>
+                  <span>AI Core Protection</span>
                   <span class="mono-val" id="aiConfidenceValLabel">55%</span>
                 </div>
                 <input type="range" id="aiConfidenceSlider" min="20" max="85" step="1" value="55" />
               </div>
 
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Edge Feather (Smoothness)</span>
-                  <span class="mono-val" id="featherValLabel">1.5 px</span>
+              <div class="grid-2-cols">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Edge Softness</span>
+                    <span class="mono-val" id="featherValLabel">1.5 px</span>
+                  </div>
+                  <input type="range" id="bgFeatherSlider" min="0" max="8" step="0.5" value="1.5" />
                 </div>
-                <input type="range" id="bgFeatherSlider" min="0" max="10" step="0.5" value="1.5" />
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Shrink Halo</span>
+                    <span class="mono-val" id="chokeValLabel">1</span>
+                  </div>
+                  <input type="range" id="bgChokeSlider" min="-4" max="6" step="1" value="1" />
+                </div>
               </div>
 
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>Shrink / Choke Edge Halo</span>
-                  <span class="mono-val" id="chokeValLabel">1</span>
-                </div>
-                <input type="range" id="bgChokeSlider" min="-4" max="6" step="1" value="1" />
-              </div>
-
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Color Spill Neutralizer</span>
+                  <span>Color Spill Removal</span>
                   <span class="mono-val" id="spillValLabel">60%</span>
                 </div>
                 <input type="range" id="bgSpillSlider" min="0" max="100" step="5" value="60" />
               </div>
             </div>
 
-            <!-- Interactive Manual Brush -->
+            <!-- Manual Brush -->
             <div class="sub-card">
               <div class="section-header-inline">
                 <span class="field-label">Manual Touch-Up Brush</span>
-                <button type="button" id="resetBrushMaskBtn" class="link-btn">Reset Brush</button>
+                <button type="button" id="resetBrushMaskBtn" class="link-btn">Clear Brush</button>
               </div>
               <div class="segmented-control" id="brushModeGroup">
                 <button type="button" class="seg-btn active" data-brush="off">Move Photo</button>
@@ -230,66 +246,83 @@
           </section>
 
           <!-- ================================================================
-               TAB 2: FORMAL SUIT, BLAZER & TIE OVERLAY STUDIO
+               TAB 2: REALISTIC INDIAN MALE & FEMALE FORMAL ATTIRE STUDIO
                ================================================================ -->
           <section class="tool-section" id="panel-suit">
             <div class="section-header">
-              <h2>Formal Suit &amp; Blazer Overlay</h2>
+              <h2>Realistic Indian Formal Attire</h2>
               <span class="mono-tag" id="activeSuitBadge">None</span>
             </div>
 
-            <p class="helper-note">
-              Click any suit below to dress the customer. Drag directly on the canvas to align the collar with their neck!
-            </p>
+            <!-- Category Filter: All / Male / Female / Custom PNG -->
+            <div class="segmented-control" id="suitCategoryTabs">
+              <button type="button" class="seg-btn active" data-suitcat="all">All (13)</button>
+              <button type="button" class="seg-btn" data-suitcat="male">Male (7)</button>
+              <button type="button" class="seg-btn" data-suitcat="female">Female (5)</button>
+            </div>
 
+            <!-- Upload Custom Real Studio PNG Suit Overlay -->
+            <div class="btn-row-compact">
+              <label for="customSuitUploadInput" class="glass-btn btn-sm btn-full">
+                👔 Upload Custom Transparent Suit (.PNG)
+              </label>
+              <input type="file" id="customSuitUploadInput" accept="image/png,image/webp" class="sr-only" />
+            </div>
+
+            <!-- Photorealistic Shaded Attire Catalog -->
             <div class="suit-grid" id="suitCatalogGrid"></div>
 
+            <!-- Suit Alignment & Neck Blending Controls -->
             <div class="sub-card">
               <div class="section-header-inline">
-                <span class="field-label">Suit Fit &amp; Collar Alignment</span>
+                <span class="field-label">Align Collar to Customer's Neck</span>
                 <button type="button" id="resetSuitFitBtn" class="link-btn">Reset Fit</button>
               </div>
 
               <div class="switch-row">
-                <label for="dragSuitModeToggle"><strong>Drag Suit on Canvas</strong></label>
+                <label for="dragSuitModeToggle"><strong>Drag Suit Directly on Photo</strong></label>
                 <input type="checkbox" id="dragSuitModeToggle" checked />
               </div>
 
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Overall Suit Scale</span>
-                  <span class="mono-val" id="suitScaleValLabel">100%</span>
+              <div class="grid-2-cols">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Suit Size</span>
+                    <span class="mono-val" id="suitScaleValLabel">100%</span>
+                  </div>
+                  <input type="range" id="suitScaleSlider" min="55" max="165" step="1" value="100" />
                 </div>
-                <input type="range" id="suitScaleSlider" min="55" max="165" step="1" value="100" />
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Shoulder Width</span>
+                    <span class="mono-val" id="suitWidthValLabel">100%</span>
+                  </div>
+                  <input type="range" id="suitWidthSlider" min="70" max="145" step="1" value="100" />
+                </div>
+              </div>
+
+              <div class="grid-2-cols">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Up / Down (Y)</span>
+                    <span class="mono-val" id="suitYValLabel">0%</span>
+                  </div>
+                  <input type="range" id="suitYSlider" min="-45" max="45" step="0.5" value="0" />
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Left / Right (X)</span>
+                    <span class="mono-val" id="suitXValLabel">0%</span>
+                  </div>
+                  <input type="range" id="suitXSlider" min="-35" max="35" step="0.5" value="0" />
+                </div>
               </div>
 
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>Shoulder Width Stretch</span>
-                  <span class="mono-val" id="suitWidthValLabel">100%</span>
-                </div>
-                <input type="range" id="suitWidthSlider" min="70" max="145" step="1" value="100" />
-              </div>
-
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Vertical Position (Up / Down)</span>
-                  <span class="mono-val" id="suitYValLabel">0%</span>
-                </div>
-                <input type="range" id="suitYSlider" min="-45" max="45" step="0.5" value="0" />
-              </div>
-
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Horizontal Position (Left / Right)</span>
-                  <span class="mono-val" id="suitXValLabel">0%</span>
-                </div>
-                <input type="range" id="suitXSlider" min="-35" max="35" step="0.5" value="0" />
-              </div>
-
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Suit Brightness</span>
+                  <span>Lighting &amp; Fabric Brightness</span>
                   <span class="mono-val" id="suitBrightValLabel">100%</span>
                 </div>
                 <input type="range" id="suitBrightSlider" min="65" max="135" step="1" value="100" />
@@ -298,17 +331,17 @@
           </section>
 
           <!-- ================================================================
-               TAB 3: INDIAN DOCUMENT PRESETS & BIOMETRIC CROP
+               TAB 3: INDIAN DOCUMENT STANDARDS & BIOMETRIC CROP
                ================================================================ -->
           <section class="tool-section" id="panel-doc">
             <div class="section-header">
-              <h2>Indian Document Size &amp; DPI</h2>
-              <span class="mono-tag" id="outputPxReadout">413 × 531 px</span>
+              <h2>Indian Document Size &amp; Crop</h2>
+              <span class="mono-tag" id="outputPxReadout">390 × 508 px</span>
             </div>
 
             <label class="field-label" for="docPresetSelect">Select Official Preset</label>
             <select id="docPresetSelect" class="glass-select">
-              <option value="passport_std" selected>Standard Shopkeeper Passport (33 × 43 mm | 6 per A4 Row)</option>
+              <option value="passport_std" selected>Shopkeeper Standard Passport (33 × 43 mm | 6 per A4 Row)</option>
               <option value="passport_35_45">Official Studio Passport / ID (35 × 45 mm)</option>
               <option value="passport_in">Indian Passport Seva / OCI (51 × 51 mm | 2×2 in)</option>
               <option value="gov_id_in">National Government ID / UIDAI (35 × 45 mm)</option>
@@ -320,7 +353,7 @@
             </select>
 
             <p id="presetHintText" class="helper-note">
-              Shopkeeper Favourite (33 × 43 mm): Fits <strong>6 photos in a single horizontal row</strong> across an A4 sheet with neat cut margins!
+              Shopkeeper Standard (33 × 43 mm): Fits <strong>6 photos in 1 top row on A4</strong> or <strong>8 photos on 4R</strong> with zero paper waste.
             </p>
 
             <div class="grid-3-cols">
@@ -354,7 +387,7 @@
 
             <div class="sub-card">
               <div class="switch-row">
-                <label for="showBiometricGuide">Biometric Face &amp; Eye Alignment Grid</label>
+                <label for="showBiometricGuide">Show Biometric Face Oval Guide</label>
                 <input type="checkbox" id="showBiometricGuide" checked />
               </div>
 
@@ -368,7 +401,7 @@
 
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>Straighten Head Tilt</span>
+                  <span>Head Tilt Rotation</span>
                   <span class="mono-val" id="rotateValLabel">0.0°</span>
                 </div>
                 <input type="range" id="cropRotateSlider" min="-25" max="25" step="0.2" value="0" />
@@ -377,55 +410,101 @@
               <div class="btn-row-compact">
                 <button type="button" id="rotate90LeftBtn" class="glass-btn btn-sm">↺ -90°</button>
                 <button type="button" id="flipHBtn" class="glass-btn btn-sm">⇄ Flip</button>
-                <button type="button" id="autoCenterBtn" class="glass-btn btn-sm">⌖ Center</button>
+                <button type="button" id="autoCenterBtn" class="glass-btn btn-sm">⌖ Reset</button>
                 <button type="button" id="rotate90RightBtn" class="glass-btn btn-sm">↻ +90°</button>
               </div>
             </div>
           </section>
 
           <!-- ================================================================
-               TAB 4: STUDIO RETOUCH & UPSC/SSC NAME + DATE SLATE
+               TAB 4: CUSTOM PHOTO BORDER, RETOUCH & UPSC/SSC NAME SLATE
                ================================================================ -->
           <section class="tool-section" id="panel-retouch">
             <div class="section-header">
-              <h2>Studio Retouch &amp; Name Slate</h2>
-              <button type="button" id="resetRetouchBtn" class="link-btn">Reset</button>
+              <h2>Custom Border, Retouch &amp; Slate</h2>
+              <button type="button" id="resetRetouchBtn" class="link-btn">Reset All</button>
             </div>
 
+            <!-- Complete Optional Photo Border Studio -->
             <div class="sub-card">
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Face Brightness</span>
-                  <span class="mono-val" id="brightValLabel">105%</span>
-                </div>
-                <input type="range" id="brightnessSlider" min="60" max="150" step="1" value="105" />
+              <div class="switch-row">
+                <label for="enablePhotoBorder"><strong>Enable Photo Cut Border</strong></label>
+                <input type="checkbox" id="enablePhotoBorder" checked />
               </div>
 
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Contrast</span>
-                  <span class="mono-val" id="contrastValLabel">104%</span>
+              <div id="borderControlsWrap" class="placard-fields">
+                <div class="custom-color-row">
+                  <span class="field-label-inline">Border Color:</span>
+                  <div class="color-picker-wrap">
+                    <button type="button" class="border-color-chip active" data-bcolor="#0f172a" style="background:#0f172a;" title="Classic Black"></button>
+                    <button type="button" class="border-color-chip" data-bcolor="#475569" style="background:#475569;" title="Studio Slate Grey"></button>
+                    <button type="button" class="border-color-chip" data-bcolor="#1e3a8a" style="background:#1e3a8a;" title="Navy Border"></button>
+                    <button type="button" class="border-color-chip" data-bcolor="#ffffff" style="background:#ffffff;" title="Pure White"></button>
+                    <input type="color" id="photoBorderColorPicker" value="#0f172a" title="Custom Border Color" />
+                  </div>
                 </div>
-                <input type="range" id="contrastSlider" min="60" max="150" step="1" value="104" />
-              </div>
 
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Skin Saturation</span>
-                  <span class="mono-val" id="satValLabel">100%</span>
-                </div>
-                <input type="range" id="saturationSlider" min="0" max="150" step="1" value="100" />
-              </div>
+                <div class="grid-2-cols">
+                  <div class="slider-group">
+                    <div class="slider-header">
+                      <span>Border Thickness</span>
+                      <span class="mono-val" id="borderWidthValLabel">3 px</span>
+                    </div>
+                    <input type="range" id="photoBorderWidthSlider" min="1" max="18" step="1" value="3" />
+                  </div>
 
-              <div class="slider-group">
-                <div class="slider-header">
-                  <span>Warm / Cool Tone</span>
-                  <span class="mono-val" id="warmthValLabel">0</span>
+                  <div class="slider-group">
+                    <div class="slider-header">
+                      <span>Inner White Frame</span>
+                      <span class="mono-val" id="borderInsetValLabel">0 px</span>
+                    </div>
+                    <input type="range" id="photoBorderInsetSlider" min="0" max="20" step="1" value="0" title="Adds a studio white inner margin inside the outer cut border" />
+                  </div>
                 </div>
-                <input type="range" id="warmthSlider" min="-40" max="40" step="1" value="0" />
               </div>
             </div>
 
+            <!-- Lighting & Skin Tone Retouch -->
+            <div class="sub-card">
+              <span class="field-label">Studio Lighting &amp; Skin Tone</span>
+              <div class="grid-2-cols">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Brightness</span>
+                    <span class="mono-val" id="brightValLabel">105%</span>
+                  </div>
+                  <input type="range" id="brightnessSlider" min="60" max="150" step="1" value="105" />
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Contrast</span>
+                    <span class="mono-val" id="contrastValLabel">104%</span>
+                  </div>
+                  <input type="range" id="contrastSlider" min="60" max="150" step="1" value="104" />
+                </div>
+              </div>
+
+              <div class="grid-2-cols">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Saturation</span>
+                    <span class="mono-val" id="satValLabel">100%</span>
+                  </div>
+                  <input type="range" id="saturationSlider" min="0" max="150" step="1" value="100" />
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Warmth</span>
+                    <span class="mono-val" id="warmthValLabel">0</span>
+                  </div>
+                  <input type="range" id="warmthSlider" min="-40" max="40" step="1" value="0" />
+                </div>
+              </div>
+            </div>
+
+            <!-- UPSC / SSC Name & Date Slate -->
             <div class="sub-card">
               <div class="switch-row">
                 <label for="enablePlacardToggle"><strong>Name &amp; Date Slate (UPSC / SSC)</strong></label>
@@ -435,82 +514,81 @@
                 <input type="text" id="placardNameInput" class="glass-input" placeholder="FULL NAME (e.g. AARAV SHARMA)" maxlength="32" />
                 <div class="grid-2-cols">
                   <input type="text" id="placardDateInput" class="glass-input" placeholder="DOP: DD-MM-YYYY" maxlength="20" />
-                  <button type="button" id="useTodayDateBtn" class="glass-btn btn-sm">Today</button>
+                  <button type="button" id="useTodayDateBtn" class="glass-btn btn-sm">Today's Date</button>
                 </div>
-              </div>
-            </div>
-
-            <div class="sub-card">
-              <div class="switch-row">
-                <label for="enablePhotoBorder">Crisp Black Cut Border Around Photo</label>
-                <input type="checkbox" id="enablePhotoBorder" checked />
               </div>
             </div>
           </section>
 
           <!-- ================================================================
-               TAB 5: SHOPKEEPER TOP-HEADER PRINT SHEET & LOSSLESS .TIFF
+               TAB 5: ZERO-WASTE AUTO PRINT SHEET & LOSSLESS .TIFF
                ================================================================ -->
           <section class="tool-section" id="panel-sheet">
             <div class="section-header">
-              <h2>Shopkeeper Print Sheet &amp; TIFF</h2>
-              <span class="mono-tag" id="sheetCapacityBadge">6 Copies</span>
+              <h2>Zero-Waste Print Sheet</h2>
+              <span class="mono-tag" id="sheetCapacityBadge">6 / 36 Max</span>
             </div>
 
-            <p class="helper-note">
-              <strong>Shopkeeper Paper-Saver Mode:</strong> Photos are packed strictly at the <strong>Top Header</strong> with minimal margin so you can cut the top strip or reuse partial sheets!
-            </p>
-
-            <label class="field-label" for="paperSizeSelect">Photo Paper / Sheet Size</label>
+            <label class="field-label" for="paperSizeSelect">Select Photo Paper Size</label>
             <select id="paperSizeSelect" class="glass-select">
-              <option value="a4" selected>A4 Full Sheet (210 × 297 mm) — 6 Photos/Row</option>
-              <option value="4r">4R Photo Paper (4 × 6 in / 101.6 × 152.4 mm)</option>
-              <option value="5r">5R Photo Paper (5 × 7 in / 127 × 177.8 mm)</option>
-              <option value="a5">A5 Half Sheet (148 × 210 mm)</option>
+              <option value="a4" selected>A4 Sheet (210 × 297 mm) — 6/Row, 36–42 Max</option>
+              <option value="4r">4R Photo Paper (4 × 6 in / 101.6 × 152.4 mm) — 8 Max</option>
+              <option value="5r">5R Photo Paper (5 × 7 in / 127 × 177.8 mm) — 12 Max</option>
+              <option value="a5">A5 Half Sheet (148 × 210 mm) — 16 Max</option>
               <option value="letter">US Letter (8.5 × 11 in)</option>
             </select>
 
-            <div class="control-row">
-              <label class="field-label">Row Alignment on Paper</label>
-              <div class="segmented-control" id="sheetAlignGroup">
-                <button type="button" class="seg-btn active" data-align="top-left">Top-Left (Max Save)</button>
-                <button type="button" class="seg-btn" data-align="top-center">Top-Header Center</button>
+            <!-- Auto Zero-Waste Quick Fill Actions -->
+            <div class="sub-card highlight-card">
+              <div class="section-header-inline">
+                <span class="field-label">Auto Zero-Waste Paper Packing</span>
+                <span class="mono-val" id="gridFormulaLabel">6 Cols × 6 Rows</span>
+              </div>
+              <div class="btn-row-compact">
+                <button type="button" id="fillOneRowBtn" class="glass-btn btn-xs">1 Full Row</button>
+                <button type="button" id="fillTwoRowsBtn" class="glass-btn btn-xs">2 Full Rows</button>
+                <button type="button" id="fillHalfSheetBtn" class="glass-btn btn-xs">Half Sheet</button>
+                <button type="button" id="fillMaxSheetBtn" class="glass-btn btn-xs btn-primary">Fill Max Sheet (0 Waste)</button>
+              </div>
+              <div class="switch-row">
+                <label for="autoFit4R8Toggle">Auto-Rotate Tiles on 4R for Max 8 Photos</label>
+                <input type="checkbox" id="autoFit4R8Toggle" checked />
               </div>
             </div>
 
-            <div class="control-row">
-              <label class="field-label">Paper Orientation</label>
-              <div class="segmented-control" id="paperOrientationGroup">
-                <button type="button" class="seg-btn active" data-orient="portrait">Portrait</button>
-                <button type="button" class="seg-btn" data-orient="landscape">Landscape</button>
+            <div class="grid-2-cols">
+              <div class="control-row">
+                <label class="field-label">Header Alignment</label>
+                <div class="segmented-control" id="sheetAlignGroup">
+                  <button type="button" class="seg-btn active" data-align="top-center">Top-Center</button>
+                  <button type="button" class="seg-btn" data-align="top-left">Top-Left</button>
+                </div>
+              </div>
+
+              <div class="control-row">
+                <label class="field-label">Paper Orientation</label>
+                <div class="segmented-control" id="paperOrientationGroup">
+                  <button type="button" class="seg-btn active" data-orient="portrait">Portrait</button>
+                  <button type="button" class="seg-btn" data-orient="landscape">Landscape</button>
+                </div>
               </div>
             </div>
 
             <div class="slider-group">
               <div class="slider-header">
-                <span>Number of Photos for Customer</span>
+                <span>Number of Photos to Print</span>
                 <span class="mono-val" id="copyCountValLabel">6 Copies</span>
               </div>
               <div class="copy-count-controls">
-                <input type="range" id="copyCountSlider" min="1" max="54" step="1" value="6" />
-                <input type="number" id="copyCountNumber" class="glass-input num-sm" min="1" max="54" value="6" />
+                <input type="range" id="copyCountSlider" min="1" max="60" step="1" value="6" />
+                <input type="number" id="copyCountNumber" class="glass-input num-sm" min="1" max="60" value="6" />
               </div>
-            </div>
-
-            <!-- Shopkeeper Quick Customer Strip Buttons -->
-            <div class="btn-row-compact">
-              <button type="button" class="glass-btn btn-xs copy-preset-btn" data-copies="4">4 (1 Strip)</button>
-              <button type="button" class="glass-btn btn-xs copy-preset-btn" data-copies="6">6 (1 A4 Row)</button>
-              <button type="button" class="glass-btn btn-xs copy-preset-btn" data-copies="8">8 (4R Sheet)</button>
-              <button type="button" class="glass-btn btn-xs copy-preset-btn" data-copies="12">12 (2 Rows)</button>
-              <button type="button" class="glass-btn btn-xs copy-preset-btn" data-copies="30">30 Pics</button>
-              <button type="button" class="glass-btn btn-xs copy-preset-btn" data-copies="42">42 (Full A4)</button>
             </div>
 
             <div class="grid-3-cols">
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>Top/Side Margin</span>
+                  <span>Margin</span>
                   <span class="mono-val" id="marginValLabel">2.0 mm</span>
                 </div>
                 <input type="range" id="sheetMarginSlider" min="0" max="12" step="0.5" value="2.0" />
@@ -524,24 +602,24 @@
               </div>
               <div class="slider-group">
                 <div class="slider-header">
-                  <span>Skip Top (mm)</span>
+                  <span>Skip Top</span>
                   <span class="mono-val" id="topOffsetValLabel">0 mm</span>
                 </div>
-                <input type="range" id="sheetTopOffsetSlider" min="0" max="200" step="5" value="0" title="Skip used top rows on partially used A4 sheets" />
+                <input type="range" id="sheetTopOffsetSlider" min="0" max="200" step="5" value="0" />
               </div>
             </div>
 
             <div class="switch-row">
-              <label for="showCropMarksToggle">Scissor Cut Marks &amp; Trim Guides</label>
+              <label for="showCropMarksToggle">Scissor Cut Marks &amp; Paper-Saver Cut Line</label>
               <input type="checkbox" id="showCropMarksToggle" checked />
             </div>
 
             <!-- LOSSLESS EXPORT BOX -->
             <div class="export-box">
-              <h3>1. Print or Download Customer Sheet</h3>
+              <h3>1. Print or Download Sheet (Exact Physical Scale)</h3>
               <div class="export-btn-stack">
                 <button type="button" id="printSheetDirectBtn" class="glass-btn btn-primary btn-full">
-                  🖨 Direct Shop Printer (Top-Header Exact Scale)
+                  🖨 Direct Shop Printer (Exact mm Scale)
                 </button>
                 <div class="grid-2-cols">
                   <button type="button" id="downloadSheetTiffBtn" class="glass-btn btn-sm">⬇ Sheet (.TIFF Lossless)</button>
@@ -565,31 +643,29 @@
 
       <!-- RIGHT STAGE VIEWPORT -->
       <section class="studio-stage" id="studioStageSection">
-        <div class="stage-toolbar glass-panel">
+        <div class="stage-toolbar matte-glass">
           <div class="stage-metrics">
             <span class="metric-item"><strong>Doc:</strong> <span id="metricDocSize">33×43 mm</span></span>
             <span class="metric-sep">|</span>
-            <span class="metric-item"><strong>Output:</strong> <span id="metricPixels">390×508 px @ 300 DPI</span></span>
+            <span class="metric-item"><strong>Pixels:</strong> <span id="metricPixels">390×508 px @ 300 DPI</span></span>
             <span class="metric-sep">|</span>
-            <span class="metric-item"><strong>Sheet:</strong> <span id="metricSheetInfo">A4 (6 pcs Top Row)</span></span>
+            <span class="metric-item"><strong>Sheet:</strong> <span id="metricSheetInfo">A4 (6 pcs)</span></span>
           </div>
 
           <div class="stage-view-toggles">
-            <button type="button" id="compareOriginalBtn" class="glass-btn btn-xs">
-              👁 Hold to Compare
-            </button>
+            <button type="button" id="loadSampleBtn" class="glass-btn btn-xs">Sample Photo</button>
+            <button type="button" id="compareOriginalBtn" class="glass-btn btn-xs">👁 Hold Original</button>
           </div>
         </div>
 
         <!-- WORKSPACE 1: Interactive Cropper & Suit Alignment -->
         <div id="workspaceStudio" class="workspace-view active">
-          <div class="canvas-stage-wrapper glass-panel" id="cropStageContainer">
+          <div class="canvas-stage-wrapper matte-glass" id="cropStageContainer">
             <canvas id="interactiveCropCanvas"></canvas>
 
-            <!-- Floating Single Output Card -->
-            <div class="floating-preview-card glass-panel" id="floatingSinglePreview">
+            <div class="floating-preview-card matte-glass" id="floatingSinglePreview">
               <div class="preview-card-header">
-                <span>Customer Photo</span>
+                <span>Live Output</span>
                 <span id="singleFileSizeEst" class="mono-tag">~580 KB</span>
               </div>
               <div class="single-canvas-wrap">
@@ -603,27 +679,60 @@
           </div>
 
           <div class="stage-footer-hint">
-            <span>💡 <strong>Drag</strong> to position face (or Suit when in Suit tab) • <strong>Mouse Wheel</strong> to zoom • Click <strong>2. Print Sheet</strong> above to see top-row paper layout.</span>
+            <span>💡 <strong>Drag</strong> to position face (or drag Suit when in Suit tab) • <strong>Scroll</strong> to zoom • Use <strong>Direct Print (Ready Photo)</strong> above if already edited.</span>
           </div>
         </div>
 
-        <!-- WORKSPACE 2: Top-Header Print Sheet Preview (Scrollable & Zoomable) -->
+        <!-- WORKSPACE 2: Zero-Waste Print Sheet Preview -->
         <div id="workspacePrint" class="workspace-view">
-          <div class="sheet-stage-wrapper glass-panel">
+          <div class="sheet-stage-wrapper matte-glass">
             <div class="sheet-canvas-scroll">
               <canvas id="printSheetCanvas"></canvas>
             </div>
           </div>
           <div class="stage-footer-hint">
-            <span id="sheetSummaryFooter">Top-Header Shopkeeper Layout — 6 photos in Row 1 at the very top of A4 so the remaining sheet can be reused!</span>
+            <span id="sheetSummaryFooter">Zero-Waste Top-Header Layout — Ready for exact 1:1 millimeter printing or lossless .TIFF export.</span>
           </div>
         </div>
       </section>
     </main>
   </div>
 
+  <!-- ========================================================================
+       LIVE CAMERA CAPTURE MODAL (PC WEBCAM & MOBILE FRONT/REAR CAMERA)
+       ======================================================================== -->
+  <div id="cameraModal" class="camera-modal hidden" role="dialog" aria-modal="true" aria-labelledby="cameraModalTitle">
+    <div class="camera-dialog matte-glass">
+      <div class="camera-header">
+        <div>
+          <h2 id="cameraModalTitle">📸 Live Studio Camera Capture</h2>
+          <p>Align customer's head &amp; shoulders inside the biometric guide</p>
+        </div>
+        <button type="button" id="closeCameraModalBtn" class="glass-btn btn-xs">✕ Close</button>
+      </div>
+
+      <div class="camera-viewport-wrap">
+        <video id="cameraVideoEl" autoplay playsinline muted></video>
+        <!-- Biometric Face & Shoulder Guide Overlay on Live Video -->
+        <svg class="camera-guide-svg" viewBox="0 0 350 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect x="2" y="2" width="346" height="446" fill="none" stroke="rgba(56,189,248,0.6)" stroke-width="3" />
+          <line x1="175" y1="0" x2="175" y2="450" stroke="rgba(56,189,248,0.4)" stroke-width="1.5" stroke-dasharray="6 6" />
+          <line x1="0" y1="185" x2="350" y2="185" stroke="rgba(56,189,248,0.4)" stroke-width="1.5" stroke-dasharray="6 6" />
+          <ellipse cx="175" cy="190" rx="95" ry="125" fill="none" stroke="#34d399" stroke-width="2.5" stroke-dasharray="8 6" />
+          <path d="M35 445 Q65 340 135 325 L215 325 Q285 340 315 445" fill="none" stroke="rgba(52,211,153,0.7)" stroke-width="2.5" />
+        </svg>
+      </div>
+
+      <div class="camera-controls-bar">
+        <button type="button" id="switchCameraBtn" class="glass-btn btn-sm">🔄 Switch Cam (Front/Back)</button>
+        <button type="button" id="mirrorCameraBtn" class="glass-btn btn-sm">⇄ Mirror Video</button>
+        <button type="button" id="capturePhotoBtn" class="glass-btn btn-primary">📸 Click &amp; Load into Studio</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-  <script src="app.js?v=4.0" defer></script>
+  <script src="app.js?v=5.0" defer></script>
 </body>
 </html>

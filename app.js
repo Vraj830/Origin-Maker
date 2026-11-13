@@ -1,123 +1,311 @@
 /* ==========================================================================
-   AuraID Studio Pro v4.0 — Shopkeeper Edition Engine (app.js)
-   - Dual AI Engine: ISNet ONNX Deep Matting (@imgly/background-removal) +
-     Realtime MediaPipe + CIE-LAB Perceptual Trimap Cutout
-   - Shopkeeper Top-Header Paper-Saver Print Sheet (6 per row on A4, Top-Aligned)
-   - Formal Suit & Blazer Vector Studio + Lossless 24-bit .TIFF Encoder
+   AuraID Studio Pro v5.0 — Complete Shopkeeper & Studio Engine (app.js)
+   PART 1 OF 2:
+   - Photorealistic Shaded Indian Male & Female Formal Attire (13 Templates + PNG Upload)
+   - Live WebRTC Camera Capture Modal (Front/Back Switch + Mirror)
+   - Dual AI Engine: ISNet ONNX Deep Hair Matting + Realtime MediaPipe & CIE-LAB
    ========================================================================== */
 
 (() => {
   'use strict';
 
   // --------------------------------------------------------------------------
-  // 1. FORMAL BLAZER & SUIT VECTOR TEMPLATES
+  // 1. PHOTOREALISTIC SHADED INDIAN MALE & FEMALE FORMAL ATTIRE CATALOG
+  //    Uses multi-stop directional cloth gradients, realistic collar drop shadows,
+  //    3D lapel bevels, and natural neck V-opening (x:134..266) for lifelike fit.
   // --------------------------------------------------------------------------
+  const COMMON_SVG_DEFS = `
+    <defs>
+      <filter id="dropShad" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.42"/>
+      </filter>
+      <filter id="softShad" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.28"/>
+      </filter>
+      <linearGradient id="shirtWhite" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="65%" stop-color="#f1f5f9"/>
+        <stop offset="100%" stop-color="#cbd5e1"/>
+      </linearGradient>
+      <linearGradient id="shirtSky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e0f2fe"/>
+        <stop offset="70%" stop-color="#bae6fd"/>
+        <stop offset="100%" stop-color="#7dd3fc"/>
+      </linearGradient>
+      <linearGradient id="navyWool" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e293b"/>
+        <stop offset="45%" stop-color="#0f172a"/>
+        <stop offset="100%" stop-color="#060b16"/>
+      </linearGradient>
+      <linearGradient id="navyLapel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#334155"/>
+        <stop offset="100%" stop-color="#0f172a"/>
+      </linearGradient>
+      <linearGradient id="charcoalWool" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#27272a"/>
+        <stop offset="50%" stop-color="#18181b"/>
+        <stop offset="100%" stop-color="#09090b"/>
+      </linearGradient>
+      <linearGradient id="charcoalLapel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#3f3f46"/>
+        <stop offset="100%" stop-color="#18181b"/>
+      </linearGradient>
+      <linearGradient id="royalWool" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1d4ed8"/>
+        <stop offset="55%" stop-color="#1e3a8a"/>
+        <stop offset="100%" stop-color="#0f172a"/>
+      </linearGradient>
+      <linearGradient id="crimsonSilk" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#dc2626"/>
+        <stop offset="50%" stop-color="#991b1b"/>
+        <stop offset="100%" stop-color="#450a0a"/>
+      </linearGradient>
+      <linearGradient id="goldSilk" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#fde047"/>
+        <stop offset="50%" stop-color="#eab308"/>
+        <stop offset="100%" stop-color="#a16207"/>
+      </linearGradient>
+    </defs>
+  `;
+
   const FORMAL_SUITS = [
     {
       id: 'none',
-      name: 'No Suit Overlay',
+      category: 'all',
+      name: 'No Suit (Original)',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="200" cy="160" r="95" fill="none" stroke="#94a3b8" stroke-width="14" stroke-dasharray="22 14"/>
-        <line x1="130" y1="90" x2="270" y2="230" stroke="#ef4444" stroke-width="16" stroke-linecap="round"/>
+        <circle cx="200" cy="160" r="92" fill="none" stroke="#94a3b8" stroke-width="14" stroke-dasharray="22 14"/>
+        <line x1="132" y1="92" x2="268" y2="228" stroke="#ef4444" stroke-width="16" stroke-linecap="round"/>
+      </svg>`
+    },
+    // --- MALE ATTIRE TEMPLATES ---
+    {
+      id: 'male_navy_crimson',
+      category: 'male',
+      name: 'Navy Suit + Crimson Tie',
+      svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        ${COMMON_SVG_DEFS}
+        <!-- Inner Dress Shirt & Neck Shadow -->
+        <path d="M132 48 L200 118 L268 48 L295 320 L105 320 Z" fill="url(#shirtWhite)"/>
+        <path d="M136 50 Q200 105 264 50 L200 124 Z" fill="#94a3b8" opacity="0.28"/>
+        <!-- 3D Silk Crimson Tie with Knot Shadow -->
+        <g filter="url(#softShad)">
+          <polygon points="183,104 217,104 210,136 190,136" fill="#7f1d1d"/>
+          <polygon points="190,134 210,134 224,298 200,320 176,298" fill="url(#crimsonSilk)"/>
+          <line x1="191" y1="158" x2="213" y2="180" stroke="#fca5a5" stroke-width="3" opacity="0.45"/>
+          <line x1="187" y1="204" x2="217" y2="234" stroke="#fca5a5" stroke-width="3" opacity="0.45"/>
+        </g>
+        <!-- Crisp Spread Shirt Collar Wings -->
+        <polygon points="134,44 200,112 154,148 115,74" fill="#ffffff" filter="url(#softShad)"/>
+        <polygon points="266,44 200,112 246,148 285,74" fill="#ffffff" filter="url(#softShad)"/>
+        <!-- Tailored Navy Wool Jacket Shoulders -->
+        <path d="M-24 320 L-12 162 Q6 96 126 48 L200 292 L274 48 Q394 96 412 162 L424 320 Z" fill="url(#navyWool)" filter="url(#dropShad)"/>
+        <!-- Shoulder Seam Highlights -->
+        <path d="M-8 160 Q14 102 124 52" fill="none" stroke="#475569" stroke-width="2" opacity="0.5"/>
+        <path d="M408 160 Q386 102 276 52" fill="none" stroke="#475569" stroke-width="2" opacity="0.5"/>
+        <!-- 3D Notched Lapels with Shadow -->
+        <polygon points="125,48 165,138 143,150 160,166 200,292 104,164" fill="url(#navyLapel)" filter="url(#dropShad)"/>
+        <polygon points="275,48 235,138 257,150 240,166 200,292 296,164" fill="url(#navyLapel)" filter="url(#dropShad)"/>
+        <!-- Welt Pocket & White Silk Pocket Square -->
+        <rect x="268" y="216" width="60" height="10" rx="3" fill="#040812"/>
+        <polygon points="276,216 296,195 316,216" fill="#f8fafc" filter="url(#softShad)"/>
       </svg>`
     },
     {
-      id: 'navy_crimson_tie',
-      name: 'Navy Suit + Red Tie',
+      id: 'male_charcoal_exec',
+      category: 'male',
+      name: 'Charcoal Black + Navy Tie',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="navyG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1e293b"/>
-            <stop offset="100%" stop-color="#0f172a"/>
-          </linearGradient>
-        </defs>
-        <path d="M132 52 L200 112 L268 52 L285 320 L115 320 Z" fill="#ffffff"/>
-        <polygon points="184,102 216,102 210,132 190,132" fill="#7f1d1d"/>
-        <polygon points="190,130 210,130 222,295 200,320 178,295" fill="#b91c1c"/>
-        <polygon points="134,46 200,110 156,142 118,75" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-        <polygon points="266,46 200,110 244,142 282,75" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-        <path d="M-20 320 L-10 165 Q5 102 126 54 L200 285 L274 54 Q395 102 410 165 L420 320 Z" fill="url(#navyG)"/>
-        <polygon points="124,52 162,135 142,148 158,162 200,285 108,165" fill="#334155" stroke="#0f172a" stroke-width="2"/>
-        <polygon points="276,52 238,135 258,148 242,162 200,285 292,165" fill="#334155" stroke="#0f172a" stroke-width="2"/>
-        <rect x="268" y="218" width="58" height="10" rx="3" fill="#090d16"/>
-        <polygon points="276,218 295,198 314,218" fill="#ffffff"/>
+        ${COMMON_SVG_DEFS}
+        <path d="M132 48 L200 118 L268 48 L295 320 L105 320 Z" fill="url(#shirtWhite)"/>
+        <g filter="url(#softShad)">
+          <polygon points="183,104 217,104 210,136 190,136" fill="#172554"/>
+          <polygon points="190,134 210,134 224,298 200,320 176,298" fill="url(#royalWool)"/>
+          <line x1="189" y1="165" x2="214" y2="190" stroke="#93c5fd" stroke-width="3.5" opacity="0.5"/>
+          <line x1="186" y1="210" x2="217" y2="241" stroke="#93c5fd" stroke-width="3.5" opacity="0.5"/>
+        </g>
+        <polygon points="134,44 200,112 154,148 115,74" fill="#ffffff" filter="url(#softShad)"/>
+        <polygon points="266,44 200,112 246,148 285,74" fill="#ffffff" filter="url(#softShad)"/>
+        <path d="M-24 320 L-12 162 Q6 96 126 48 L200 292 L274 48 Q394 96 412 162 L424 320 Z" fill="url(#charcoalWool)" filter="url(#dropShad)"/>
+        <polygon points="125,48 165,138 143,150 160,166 200,292 104,164" fill="url(#charcoalLapel)" filter="url(#dropShad)"/>
+        <polygon points="275,48 235,138 257,150 240,166 200,292 296,164" fill="url(#charcoalLapel)" filter="url(#dropShad)"/>
+        <rect x="268" y="216" width="60" height="10" rx="3" fill="#050505"/>
+        <polygon points="278,216 298,198 316,216" fill="#38bdf8"/>
       </svg>`
     },
     {
-      id: 'charcoal_blue_tie',
-      name: 'Charcoal + Blue Tie',
+      id: 'male_royal_gold',
+      category: 'male',
+      name: 'Royal Blue + Gold Tie',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <path d="M132 52 L200 112 L268 52 L285 320 L115 320 Z" fill="#f8fafc"/>
-        <polygon points="184,102 216,102 210,132 190,132" fill="#1e3a8a"/>
-        <polygon points="190,130 210,130 222,295 200,320 178,295" fill="#2563eb"/>
-        <polygon points="134,46 200,110 156,142 118,75" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-        <polygon points="266,46 200,110 244,142 282,75" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-        <path d="M-20 320 L-10 165 Q5 102 126 54 L200 285 L274 54 Q395 102 410 165 L420 320 Z" fill="#18181b"/>
-        <polygon points="124,52 162,135 142,148 158,162 200,285 108,165" fill="#27272a" stroke="#09090b" stroke-width="2"/>
-        <polygon points="276,52 238,135 258,148 242,162 200,285 292,165" fill="#27272a" stroke="#09090b" stroke-width="2"/>
+        ${COMMON_SVG_DEFS}
+        <path d="M132 48 L200 118 L268 48 L295 320 L105 320 Z" fill="url(#shirtWhite)"/>
+        <g filter="url(#softShad)">
+          <polygon points="183,104 217,104 210,136 190,136" fill="#854d0e"/>
+          <polygon points="190,134 210,134 224,298 200,320 176,298" fill="url(#goldSilk)"/>
+        </g>
+        <polygon points="134,44 200,112 154,148 115,74" fill="#ffffff" filter="url(#softShad)"/>
+        <polygon points="266,44 200,112 246,148 285,74" fill="#ffffff" filter="url(#softShad)"/>
+        <path d="M-24 320 L-12 162 Q6 96 126 48 L200 292 L274 48 Q394 96 412 162 L424 320 Z" fill="url(#royalWool)" filter="url(#dropShad)"/>
+        <polygon points="125,48 165,138 143,150 160,166 200,292 104,164" fill="#2563eb" filter="url(#dropShad)"/>
+        <polygon points="275,48 235,138 257,150 240,166 200,292 296,164" fill="#2563eb" filter="url(#dropShad)"/>
+        <rect x="268" y="216" width="60" height="10" rx="3" fill="#0f172a"/>
+        <polygon points="278,216 298,196 316,216" fill="#fde047"/>
       </svg>`
     },
     {
-      id: 'jodhpuri_bandhgala',
-      name: 'Indian Bandhgala',
+      id: 'male_bandhgala',
+      category: 'male',
+      name: 'Jodhpuri Bandhgala',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <path d="M-20 320 L-10 160 Q8 98 130 52 L175 95 L225 95 L270 52 Q392 98 410 160 L420 320 Z" fill="#111827"/>
-        <path d="M128 48 Q160 94 196 94 L196 122 Q145 118 116 68 Z" fill="#1f2937" stroke="#374151" stroke-width="2"/>
-        <path d="M272 48 Q240 94 204 94 L204 122 Q255 118 284 68 Z" fill="#1f2937" stroke="#374151" stroke-width="2"/>
-        <line x1="200" y1="95" x2="200" y2="320" stroke="#374151" stroke-width="3"/>
-        <circle cx="200" cy="142" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="2"/>
-        <circle cx="200" cy="195" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="2"/>
-        <circle cx="200" cy="248" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="2"/>
-        <circle cx="200" cy="300" r="7" fill="#fbbf24" stroke="#b45309" stroke-width="2"/>
-        <rect x="262" y="198" width="56" height="9" rx="2" fill="#030712"/>
-        <polygon points="272,198 290,176 308,198" fill="#f59e0b"/>
+        ${COMMON_SVG_DEFS}
+        <!-- Inner White Kurta/Collar Peek -->
+        <path d="M132 54 Q200 105 268 54 L250 120 L150 120 Z" fill="#f8fafc"/>
+        <!-- Royal Black Bandhgala Coat -->
+        <path d="M-24 320 L-12 160 Q8 96 128 48 L176 96 L224 96 L272 48 Q392 96 412 160 L424 320 Z" fill="url(#charcoalWool)" filter="url(#dropShad)"/>
+        <!-- 3D Mandarin Stand Collar with Gold Piping -->
+        <path d="M126 45 Q162 94 197 94 L197 124 Q144 120 114 68 Z" fill="url(#charcoalLapel)" stroke="#d97706" stroke-width="1.5" filter="url(#softShad)"/>
+        <path d="M274 45 Q238 94 203 94 L203 124 Q256 120 286 68 Z" fill="url(#charcoalLapel)" stroke="#d97706" stroke-width="1.5" filter="url(#softShad)"/>
+        <!-- Center Placket & Antique Brass Buttons -->
+        <line x1="200" y1="96" x2="200" y2="320" stroke="#09090b" stroke-width="4"/>
+        <circle cx="200" cy="144" r="8" fill="url(#goldSilk)" filter="url(#softShad)"/>
+        <circle cx="200" cy="198" r="8" fill="url(#goldSilk)" filter="url(#softShad)"/>
+        <circle cx="200" cy="252" r="8" fill="url(#goldSilk)" filter="url(#softShad)"/>
+        <circle cx="200" cy="304" r="8" fill="url(#goldSilk)" filter="url(#softShad)"/>
+        <rect x="262" y="196" width="58" height="9" rx="2" fill="#09090b"/>
+        <polygon points="272,196 292,174 310,196" fill="url(#goldSilk)"/>
       </svg>`
     },
     {
-      id: 'royal_open_blazer',
-      name: 'Royal Blazer (No Tie)',
+      id: 'male_nehru_jacket',
+      category: 'male',
+      name: 'Nehru Jacket + Shirt',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <path d="M132 50 L185 118 L200 185 L215 118 L268 50 L285 320 L115 320 Z" fill="#ffffff"/>
-        <polygon points="132,46 186,120 148,148 115,76" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
-        <polygon points="268,46 214,120 252,148 285,76" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
-        <path d="M-20 320 L-10 165 Q5 102 126 54 L200 290 L274 54 Q395 102 410 165 L420 320 Z" fill="#1d4ed8"/>
-        <polygon points="124,52 162,140 144,152 158,166 200,290 108,165" fill="#1e40af" stroke="#172554" stroke-width="2"/>
-        <polygon points="276,52 238,140 256,152 242,166 200,290 292,165" fill="#1e40af" stroke="#172554" stroke-width="2"/>
+        ${COMMON_SVG_DEFS}
+        <!-- Crisp White Kurta / Shirt Sleeves & Collar -->
+        <path d="M-24 320 L-12 162 Q6 96 130 48 L200 108 L270 48 Q394 96 412 162 L424 320 Z" fill="url(#shirtWhite)"/>
+        <!-- Navy Sleeveless Modi / Nehru Vest -->
+        <path d="M42 320 L55 125 Q95 75 130 48 L178 98 L222 98 L270 48 Q305 75 345 125 L358 320 Z" fill="url(#navyWool)" filter="url(#dropShad)"/>
+        <path d="M128 45 Q162 94 197 94 L197 122 Q145 118 116 66 Z" fill="url(#navyLapel)" filter="url(#softShad)"/>
+        <path d="M272 45 Q238 94 203 94 L203 122 Q255 118 284 66 Z" fill="url(#navyLapel)" filter="url(#softShad)"/>
+        <line x1="200" y1="98" x2="200" y2="320" stroke="#090d16" stroke-width="3.5"/>
+        <circle cx="200" cy="148" r="6.5" fill="#94a3b8"/>
+        <circle cx="200" cy="202" r="6.5" fill="#94a3b8"/>
+        <circle cx="200" cy="256" r="6.5" fill="#94a3b8"/>
       </svg>`
     },
     {
-      id: 'women_navy_blazer',
-      name: "Women's Navy Blazer",
+      id: 'male_white_shirt_tie',
+      category: 'male',
+      name: 'White Formal Shirt + Tie',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <path d="M126 60 Q200 165 274 60 L290 320 L110 320 Z" fill="#fdfbf7"/>
-        <path d="M-15 320 L-5 168 Q15 106 128 56 L200 268 L272 56 Q385 106 405 168 L415 320 Z" fill="#1e293b"/>
-        <path d="M126 54 Q158 145 200 268 L166 268 Q122 158 104 75 Z" fill="#334155"/>
-        <path d="M274 54 Q242 145 200 268 L234 268 Q278 158 296 75 Z" fill="#334155"/>
+        ${COMMON_SVG_DEFS}
+        <path d="M-24 320 L-12 162 Q6 96 132 48 L200 112 L268 48 Q394 96 412 162 L424 320 Z" fill="url(#shirtWhite)" filter="url(#dropShad)"/>
+        <path d="M85 165 L95 320 M315 165 L305 320" stroke="#cbd5e1" stroke-width="2.5"/>
+        <g filter="url(#softShad)">
+          <polygon points="183,100 217,100 210,132 190,132" fill="#0f172a"/>
+          <polygon points="190,130 210,130 225,296 200,320 175,296" fill="url(#navyWool)"/>
+          <line x1="189" y1="164" x2="213" y2="188" stroke="#38bdf8" stroke-width="4"/>
+          <line x1="185" y1="212" x2="217" y2="244" stroke="#38bdf8" stroke-width="4"/>
+        </g>
+        <polygon points="132,42 200,108 152,146 112,72" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShad)"/>
+        <polygon points="268,42 200,108 248,146 288,72" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShad)"/>
       </svg>`
     },
     {
-      id: 'women_formal_shirt',
-      name: "Women's Collar Coat",
+      id: 'male_sky_shirt_open',
+      category: 'male',
+      name: 'Sky Blue Formal Shirt',
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <path d="M128 52 L200 138 L272 52 L290 320 L110 320 Z" fill="#ffffff"/>
-        <polygon points="128,48 200,136 152,162 108,82" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-        <polygon points="272,48 200,136 248,162 292,82" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-        <path d="M-15 320 L-5 168 Q15 106 126 56 L200 278 L274 56 Q385 106 405 168 L415 320 Z" fill="#374151"/>
-        <polygon points="124,54 166,158 200,278 112,168" fill="#4b5563"/>
-        <polygon points="276,54 234,158 200,278 288,168" fill="#4b5563"/>
+        ${COMMON_SVG_DEFS}
+        <path d="M-24 320 L-12 162 Q6 96 132 48 L188 124 L200 178 L212 124 L268 48 Q394 96 412 162 L424 320 Z" fill="url(#shirtSky)" filter="url(#dropShad)"/>
+        <!-- Open Collar Inner Placket -->
+        <polygon points="182,115 200,185 218,115 200,145" fill="#f8fafc"/>
+        <line x1="200" y1="178" x2="200" y2="320" stroke="#93c5fd" stroke-width="3"/>
+        <circle cx="200" cy="215" r="4.5" fill="#ffffff"/>
+        <circle cx="200" cy="268" r="4.5" fill="#ffffff"/>
+        <polygon points="132,42 188,122 146,154 110,74" fill="#e0f2fe" stroke="#bae6fd" stroke-width="1.5" filter="url(#softShad)"/>
+        <polygon points="268,42 212,122 254,154 290,74" fill="#e0f2fe" stroke="#bae6fd" stroke-width="1.5" filter="url(#softShad)"/>
+      </svg>`
+    },
+
+    // --- FEMALE ATTIRE TEMPLATES ---
+    {
+      id: 'female_navy_corp',
+      category: 'female',
+      name: "Women's Navy Blazer + Shell",
+      svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        ${COMMON_SVG_DEFS}
+        <!-- Soft Ivory Silk Shell Top -->
+        <path d="M126 66 Q200 165 274 66 L290 320 L110 320 Z" fill="url(#shirtWhite)"/>
+        <!-- Tailored Women's Navy Corporate Blazer -->
+        <path d="M-16 320 L-6 166 Q14 104 128 52 L200 268 L272 52 Q386 104 406 166 L416 320 Z" fill="url(#navyWool)" filter="url(#dropShad)"/>
+        <!-- Contoured Shawl Lapels -->
+        <path d="M127 50 Q160 148 200 268 L164 268 Q120 156 102 74 Z" fill="url(#navyLapel)" filter="url(#softShad)"/>
+        <path d="M273 50 Q240 148 200 268 L236 268 Q280 156 298 74 Z" fill="url(#navyLapel)" filter="url(#softShad)"/>
+        <circle cx="200" cy="285" r="7" fill="#1e293b" stroke="#475569" stroke-width="2"/>
       </svg>`
     },
     {
-      id: 'formal_shirt_tie',
-      name: 'White Shirt & Tie',
+      id: 'female_black_collar_coat',
+      category: 'female',
+      name: "Women's Black Suit + Shirt",
       svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
-        <path d="M-20 320 L-10 165 Q5 102 132 50 L200 108 L268 50 Q395 102 410 165 L420 320 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-        <polygon points="184,98 216,98 210,128 190,128" fill="#0f172a"/>
-        <polygon points="190,126 210,126 224,295 200,320 176,295" fill="#1e293b"/>
-        <line x1="190" y1="160" x2="212" y2="180" stroke="#38bdf8" stroke-width="4"/>
-        <line x1="186" y1="205" x2="216" y2="232" stroke="#38bdf8" stroke-width="4"/>
-        <polygon points="132,45 200,106 154,142 114,74" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-        <polygon points="268,45 200,106 246,142 286,74" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+        ${COMMON_SVG_DEFS}
+        <path d="M128 50 L200 142 L272 50 L290 320 L110 320 Z" fill="url(#shirtWhite)"/>
+        <polygon points="128,44 200,136 150,166 106,80" fill="#ffffff" filter="url(#softShad)"/>
+        <polygon points="272,44 200,136 250,166 294,80" fill="#ffffff" filter="url(#softShad)"/>
+        <path d="M-16 320 L-6 166 Q14 104 126 52 L200 276 L274 52 Q386 104 406 166 L416 320 Z" fill="url(#charcoalWool)" filter="url(#dropShad)"/>
+        <polygon points="124,50 166,158 200,276 110,166" fill="url(#charcoalLapel)" filter="url(#softShad)"/>
+        <polygon points="276,50 234,158 200,276 290,166" fill="url(#charcoalLapel)" filter="url(#softShad)"/>
+      </svg>`
+    },
+    {
+      id: 'female_maroon_saree',
+      category: 'female',
+      name: 'Formal Maroon Silk Saree',
+      svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        ${COMMON_SVG_DEFS}
+        <!-- Maroon Blouse Base (Right & Left Shoulders) -->
+        <path d="M-16 320 L-6 165 Q15 104 128 54 Q200 128 272 54 Q385 104 406 165 L416 320 Z" fill="url(#crimsonSilk)" filter="url(#dropShad)"/>
+        <!-- Gold Zari Blouse Neckline Piping -->
+        <path d="M128 54 Q200 128 272 54" fill="none" stroke="url(#goldSilk)" stroke-width="5"/>
+        <!-- Diagonal Pleated Silk Saree Pallu Drape Across Left Shoulder (Viewer's Right) -->
+        <path d="M95 320 L256 58 Q335 82 375 135 L310 320 Z" fill="#b91c1c" filter="url(#dropShad)"/>
+        <!-- Rich Gold Zari Saree Border & Pleat Lines -->
+        <path d="M95 320 L256 58 L274 66 L122 320 Z" fill="url(#goldSilk)"/>
+        <path d="M155 320 L295 75" stroke="#7f1d1d" stroke-width="3" opacity="0.6"/>
+        <path d="M205 320 L328 96" stroke="#7f1d1d" stroke-width="3" opacity="0.6"/>
+        <path d="M255 320 L356 118" stroke="#7f1d1d" stroke-width="3" opacity="0.6"/>
+      </svg>`
+    },
+    {
+      id: 'female_navy_saree',
+      category: 'female',
+      name: 'Formal Navy & Gold Saree',
+      svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        ${COMMON_SVG_DEFS}
+        <path d="M-16 320 L-6 165 Q15 104 128 54 Q200 128 272 54 Q385 104 406 165 L416 320 Z" fill="url(#navyWool)" filter="url(#dropShad)"/>
+        <path d="M128 54 Q200 128 272 54" fill="none" stroke="url(#goldSilk)" stroke-width="5"/>
+        <path d="M95 320 L256 58 Q335 82 375 135 L310 320 Z" fill="url(#royalWool)" filter="url(#dropShad)"/>
+        <path d="M95 320 L256 58 L274 66 L122 320 Z" fill="url(#goldSilk)"/>
+        <path d="M155 320 L295 75" stroke="#0f172a" stroke-width="3" opacity="0.55"/>
+        <path d="M205 320 L328 96" stroke="#0f172a" stroke-width="3" opacity="0.55"/>
+      </svg>`
+    },
+    {
+      id: 'female_formal_kurti',
+      category: 'female',
+      name: 'Formal Collar Kurti + Dupatta',
+      svg: `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        ${COMMON_SVG_DEFS}
+        <!-- Teal Formal Kurti with Mandarin V-Notch Collar -->
+        <path d="M-16 320 L-6 165 Q15 104 130 52 L186 105 L200 155 L214 105 L270 52 Q385 104 406 165 L416 320 Z" fill="#0f766e" filter="url(#dropShad)"/>
+        <path d="M128 48 Q162 96 188 105 L182 128 Q142 114 116 68 Z" fill="#115e59" stroke="url(#goldSilk)" stroke-width="1.5"/>
+        <path d="M272 48 Q238 96 212 105 L218 128 Q258 114 284 68 Z" fill="#115e59" stroke="url(#goldSilk)" stroke-width="1.5"/>
+        <!-- Neatly Pinned Cream & Gold Dupatta on Shoulders -->
+        <path d="M22 320 L48 112 Q85 78 120 62 L152 320 Z" fill="#fef3c7" stroke="url(#goldSilk)" stroke-width="4" filter="url(#softShad)"/>
+        <path d="M378 320 L352 112 Q315 78 280 62 L248 320 Z" fill="#fef3c7" stroke="url(#goldSilk)" stroke-width="4" filter="url(#softShad)"/>
       </svg>`
     }
   ];
@@ -134,15 +322,15 @@
       height: 43,
       unit: 'mm',
       placard: false,
-      hint: 'Shopkeeper Favourite (33×43 mm): Fits 6 photos across a single A4 top row (6 × 33mm = 198mm) with zero wasted width!'
+      hint: 'Shopkeeper Standard (33×43 mm): Fits 6 photos in 1 A4 top row or 8 photos on 4R paper with zero paper waste!'
     },
     passport_35_45: {
-      name: 'Official Studio Passport (35×45 mm)',
+      name: 'Official Studio Passport / ID (35×45 mm)',
       width: 35,
       height: 45,
       unit: 'mm',
       placard: false,
-      hint: 'Standard 3.5×4.5 cm Indian passport size. Set Margin to 1mm & Gap to 1mm to fit 6 across A4, or 5 with wider gaps.'
+      hint: 'Standard 3.5×4.5 cm Indian passport size. Fits 8 copies on 4R (auto-rotated) or 5–6 per row on A4.'
     },
     passport_in: {
       name: 'Indian Passport Seva / OCI (51×51 mm)',
@@ -222,12 +410,15 @@
     sourceHeight: 1125,
     aiMaskCanvas: null,
     aiReady: false,
-    deepAiCutoutCanvas: null, // Output from @imgly/background-removal ISNet ONNX
+    deepAiCutoutCanvas: null,
     deepAiRunning: false,
     userBrushCanvas: null,
     compositedSubjectCanvas: null,
 
-    // Document Size & DPI (Defaulting to Shopkeeper 33x43mm so 6 fit in 1 A4 top row!)
+    // Direct Ready Photo Mode (Skips AI & BG replacement when true)
+    directReadyMode: false,
+
+    // Document Size & DPI
     presetKey: 'passport_std',
     docWidth: 33,
     docHeight: 43,
@@ -244,7 +435,7 @@
     flipH: false,
 
     // Background Removal
-    bgMode: 'hybrid', // 'none' | 'hybrid' | 'deep' | 'flood'
+    bgMode: 'hybrid',
     sampledWallSamples: [],
     tolerance: 28,
     aiConfidence: 55,
@@ -261,7 +452,8 @@
     bgColor: '#FFFFFF',
     bgVignette: false,
 
-    // Formal Suit Overlay
+    // Realistic Formal Suit Overlay
+    suitCategory: 'all',
     suitId: 'none',
     dragSuitOnCanvas: true,
     suitScale: 100,
@@ -269,6 +461,12 @@
     suitOffsetX: 0,
     suitOffsetY: 0,
     suitBrightness: 100,
+
+    // Custom Border Studio
+    enablePhotoBorder: true,
+    borderColor: '#0f172a',
+    borderWidthPx: 3,
+    borderInsetPx: 0,
 
     // Retouch & Placard
     brightness: 105,
@@ -278,20 +476,22 @@
     enablePlacard: false,
     placardName: 'AARAV SHARMA',
     placardDate: '',
-    enablePhotoBorder: true,
     compareHoldOriginal: false,
 
-    // Shopkeeper Print Sheet Layout (Defaults to A4 Top-Header 6 Copies)
+    // Zero-Waste Print Sheet Layout
     paperKey: 'a4',
-    sheetAlign: 'top-left', // 'top-left' | 'top-center'
+    sheetAlign: 'top-center',
     paperOrientation: 'portrait',
+    autoFit4R8: true,
     copyCount: 6,
     marginMm: 2.0,
     gapMm: 1.5,
     topOffsetMm: 0,
-    showCropMarks: true
+    showCropMarks: true,
+    computedSheetMetrics: { cols: 6, rows: 6, maxCapacity: 36, rotatedTiles: false }
   };
 
+  // Offscreen Processing Canvases
   const rawSourceCanvas = document.createElement('canvas');
   const rawSourceCtx = rawSourceCanvas.getContext('2d', { willReadFrequently: true });
 
@@ -305,6 +505,11 @@
   let selfieSegmentation = null;
   let pendingAiResolve = false;
   let imglyRemoveBgFn = null;
+
+  // Live Camera Stream State
+  let activeCameraStream = null;
+  let cameraFacingMode = 'user';
+  let cameraMirrored = true;
 
   // --------------------------------------------------------------------------
   // 4. INITIALIZATION
@@ -322,26 +527,32 @@
 
   function cacheDomElements() {
     const ids = [
-      'offlineStatusBadge', 'offlineStatusText', 'loadSampleBtn', 'photoUploadInput',
-      'mobileToolTabs', 'docPresetSelect', 'presetHintText', 'cropWidthInput',
-      'cropHeightInput', 'cropUnitSelect', 'dpiSelect', 'outputPxReadout',
-      'showBiometricGuide', 'cropZoomSlider', 'zoomValLabel', 'cropRotateSlider',
-      'rotateValLabel', 'rotate90LeftBtn', 'rotate90RightBtn', 'flipHBtn',
-      'autoCenterBtn', 'runDeepAiBtn', 'deepAiProgressWrap', 'deepAiProgressFill',
-      'deepAiProgressText', 'bgModeTabs', 'bgEngineStatus', 'reRunAiBtn',
-      'pickBgColorBtn', 'sampledWallSwatch', 'bgToleranceSlider', 'toleranceValLabel',
-      'aiConfidenceSlider', 'aiConfidenceValLabel', 'bgFeatherSlider', 'featherValLabel',
-      'bgChokeSlider', 'chokeValLabel', 'bgSpillSlider', 'spillValLabel',
-      'brushModeGroup', 'brushSizeSlider', 'brushSizeValLabel', 'resetBrushMaskBtn',
-      'bgPresetSwatches', 'customBgColorPicker', 'customBgHexInput', 'bgGradientToggle',
-      'suitCatalogGrid', 'activeSuitBadge', 'dragSuitModeToggle', 'resetSuitFitBtn',
+      'openCameraModalBtn', 'directPrintUploadInput', 'photoUploadInput', 'loadSampleBtn',
+      'mobileToolTabs', 'directReadyModeToggle', 'runDeepAiBtn', 'deepAiProgressWrap',
+      'deepAiProgressFill', 'deepAiProgressText', 'bgModeTabs', 'bgEngineStatus',
+      'reRunAiBtn', 'pickBgColorBtn', 'sampledWallSwatch', 'bgToleranceSlider',
+      'toleranceValLabel', 'aiConfidenceSlider', 'aiConfidenceValLabel',
+      'bgFeatherSlider', 'featherValLabel', 'bgChokeSlider', 'chokeValLabel',
+      'bgSpillSlider', 'spillValLabel', 'brushModeGroup', 'brushSizeSlider',
+      'brushSizeValLabel', 'resetBrushMaskBtn', 'bgPresetSwatches',
+      'customBgColorPicker', 'customBgHexInput', 'bgGradientToggle',
+      'suitCategoryTabs', 'customSuitUploadInput', 'suitCatalogGrid',
+      'activeSuitBadge', 'dragSuitModeToggle', 'resetSuitFitBtn',
       'suitScaleSlider', 'suitScaleValLabel', 'suitWidthSlider', 'suitWidthValLabel',
       'suitYSlider', 'suitYValLabel', 'suitXSlider', 'suitXValLabel',
-      'suitBrightSlider', 'suitBrightValLabel', 'brightnessSlider', 'brightValLabel',
-      'contrastSlider', 'contrastValLabel', 'saturationSlider', 'satValLabel',
-      'warmthSlider', 'warmthValLabel', 'resetRetouchBtn', 'enablePlacardToggle',
-      'placardInputsWrap', 'placardNameInput', 'placardDateInput', 'useTodayDateBtn',
-      'enablePhotoBorder', 'paperSizeSelect', 'sheetAlignGroup', 'paperOrientationGroup',
+      'suitBrightSlider', 'suitBrightValLabel', 'docPresetSelect', 'presetHintText',
+      'cropWidthInput', 'cropHeightInput', 'cropUnitSelect', 'dpiSelect',
+      'outputPxReadout', 'showBiometricGuide', 'cropZoomSlider', 'zoomValLabel',
+      'cropRotateSlider', 'rotateValLabel', 'rotate90LeftBtn', 'rotate90RightBtn',
+      'flipHBtn', 'autoCenterBtn', 'enablePhotoBorder', 'borderControlsWrap',
+      'photoBorderColorPicker', 'photoBorderWidthSlider', 'borderWidthValLabel',
+      'photoBorderInsetSlider', 'borderInsetValLabel', 'brightnessSlider',
+      'brightValLabel', 'contrastSlider', 'contrastValLabel', 'saturationSlider',
+      'satValLabel', 'warmthSlider', 'warmthValLabel', 'resetRetouchBtn',
+      'enablePlacardToggle', 'placardInputsWrap', 'placardNameInput',
+      'placardDateInput', 'useTodayDateBtn', 'paperSizeSelect', 'gridFormulaLabel',
+      'fillOneRowBtn', 'fillTwoRowsBtn', 'fillHalfSheetBtn', 'fillMaxSheetBtn',
+      'autoFit4R8Toggle', 'sheetAlignGroup', 'paperOrientationGroup',
       'copyCountSlider', 'copyCountNumber', 'copyCountValLabel', 'sheetCapacityBadge',
       'sheetGapSlider', 'gapValLabel', 'sheetMarginSlider', 'marginValLabel',
       'sheetTopOffsetSlider', 'topOffsetValLabel', 'showCropMarksToggle',
@@ -350,7 +561,9 @@
       'metricDocSize', 'metricPixels', 'metricSheetInfo', 'compareOriginalBtn',
       'workspaceStudio', 'workspacePrint', 'interactiveCropCanvas',
       'singleOutputCanvas', 'singleFileSizeEst', 'canvasModeBanner',
-      'printSheetCanvas', 'sheetSummaryFooter', 'toastContainer'
+      'printSheetCanvas', 'sheetSummaryFooter', 'cameraModal', 'closeCameraModalBtn',
+      'cameraVideoEl', 'switchCameraBtn', 'mirrorCameraBtn', 'capturePhotoBtn',
+      'toastContainer'
     ];
     ids.forEach((id) => {
       dom[id] = document.getElementById(id);
@@ -359,7 +572,7 @@
 
   function preloadFormalSuitSVGs() {
     FORMAL_SUITS.forEach((suit) => {
-      if (suit.id === 'none') return;
+      if (suit.id === 'none' || suit.isCustomPng) return;
       const img = new Image();
       const svgBlob = new Blob([suit.svg], { type: 'image/svg+xml;charset=utf-8' });
       img.src = URL.createObjectURL(svgBlob);
@@ -370,13 +583,23 @@
   function buildSuitCatalogUI() {
     if (!dom.suitCatalogGrid) return;
     dom.suitCatalogGrid.innerHTML = '';
-    FORMAL_SUITS.forEach((suit) => {
+
+    const filtered = FORMAL_SUITS.filter((s) =>
+      state.suitCategory === 'all' || s.id === 'none' || s.category === state.suitCategory
+    );
+
+    filtered.forEach((suit) => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `suit-card ${suit.id === state.suitId ? 'active' : ''}`;
       btn.dataset.suitId = suit.id;
+
+      const thumbHtml = suit.isCustomPng
+        ? `<img src="${suit.pngUrl}" alt="${suit.name}" />`
+        : suit.svg;
+
       btn.innerHTML = `
-        <div class="suit-thumb">${suit.svg}</div>
+        <div class="suit-thumb">${thumbHtml}</div>
         <span class="suit-title">${suit.name}</span>
       `;
       btn.addEventListener('click', () => {
@@ -387,7 +610,7 @@
         dom.activeSuitBadge.textContent = suit.id === 'none' ? 'None' : suit.name;
         renderAll();
         if (suit.id !== 'none') {
-          showToast(`${suit.name} applied — Drag on photo to align with neck`);
+          showToast(`${suit.name} applied — Drag on photo to fit neck`);
         }
       });
       dom.suitCatalogGrid.appendChild(btn);
@@ -406,14 +629,85 @@
 
   function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=4.0').then((reg) => {
-        reg.update();
-      }).catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=5.0').then((reg) => reg.update()).catch(() => {});
     }
   }
 
   // --------------------------------------------------------------------------
-  // 5. STATE-OF-THE-ART IN-BROWSER DEEP AI (@imgly/background-removal ISNet ONNX)
+  // 5. LIVE WEBRTC CAMERA CAPTURE ENGINE (PC WEBCAM & MOBILE FRONT/REAR)
+  // --------------------------------------------------------------------------
+  async function startLiveCamera() {
+    stopLiveCamera();
+    try {
+      const constraints = {
+        audio: false,
+        video: {
+          facingMode: cameraFacingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 1600 }
+        }
+      };
+      activeCameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+      dom.cameraVideoEl.srcObject = activeCameraStream;
+      dom.cameraVideoEl.classList.toggle('unmirrored', !cameraMirrored);
+      dom.cameraModal.classList.remove('hidden');
+    } catch (err) {
+      showToast('Camera permission denied or no camera found on device.');
+    }
+  }
+
+  function stopLiveCamera() {
+    if (activeCameraStream) {
+      activeCameraStream.getTracks().forEach((track) => track.stop());
+      activeCameraStream = null;
+    }
+    if (dom.cameraVideoEl) {
+      dom.cameraVideoEl.srcObject = null;
+    }
+  }
+
+  function captureFrameFromLiveCamera() {
+    const video = dom.cameraVideoEl;
+    if (!video || !video.videoWidth) return;
+
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const targetAspect = 35 / 45;
+
+    let cropW = vw;
+    let cropH = Math.round(vw / targetAspect);
+    if (cropH > vh) {
+      cropH = vh;
+      cropW = Math.round(vh * targetAspect);
+    }
+    const sx = Math.round((vw - cropW) / 2);
+    const sy = Math.round((vh - cropH) / 2);
+
+    const snapCanvas = document.createElement('canvas');
+    snapCanvas.width = cropW;
+    snapCanvas.height = cropH;
+    const sCtx = snapCanvas.getContext('2d');
+
+    if (cameraMirrored) {
+      sCtx.translate(cropW, 0);
+      sCtx.scale(-1, 1);
+    }
+    sCtx.drawImage(video, sx, sy, cropW, cropH, 0, 0, cropW, cropH);
+
+    stopLiveCamera();
+    dom.cameraModal.classList.add('hidden');
+
+    const img = new Image();
+    img.onload = () => {
+      state.directReadyMode = false;
+      dom.directReadyModeToggle.checked = false;
+      loadNewSourceImage(img, '📸 Live Camera Portrait Captured!');
+    };
+    img.src = snapCanvas.toDataURL('image/png');
+  }
+
+  // --------------------------------------------------------------------------
+  // 6. DUAL AI ENGINE: ISNet ONNX DEEP MATTING + MEDIAPIPE & CIE-LAB TRIMAP
   // --------------------------------------------------------------------------
   async function runUltraDeepAiCutout() {
     if (state.deepAiRunning || !rawSourceCanvas.width) return;
@@ -440,7 +734,7 @@
           if (total > 0) {
             const pct = Math.min(95, Math.max(15, Math.round((current / total) * 100)));
             dom.deepAiProgressFill.style.width = `${pct}%`;
-            dom.deepAiProgressText.textContent = `AI Matting (${key.split('/').pop()}): ${pct}%`;
+            dom.deepAiProgressText.textContent = `AI Hair Matting (${key.split('/').pop()}): ${pct}%`;
           }
         }
       });
@@ -461,28 +755,29 @@
       dCtx.clearRect(0, 0, state.sourceWidth, state.sourceHeight);
       dCtx.drawImage(cutoutImg, 0, 0, state.sourceWidth, state.sourceHeight);
 
+      state.directReadyMode = false;
+      dom.directReadyModeToggle.checked = false;
       state.bgMode = 'deep';
       dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((b) => {
         b.classList.toggle('active', b.dataset.bgmode === 'deep');
       });
 
       dom.deepAiProgressFill.style.width = '100%';
-      dom.deepAiProgressText.textContent = 'Ultra-HD Deep AI Cutout Complete!';
+      dom.deepAiProgressText.textContent = 'Deep AI Cutout Complete!';
       dom.bgEngineStatus.textContent = 'ISNet Deep AI Active';
 
       recomputeBackgroundCutout();
       renderAll();
-      showToast('✨ Ultra-HD Deep AI Cutout Complete!');
+      showToast('✨ Deep AI Hair-Strand Cutout Complete!');
     } catch (err) {
-      // Fallback to enhanced MediaPipe + LAB Trimap if offline or WebGL/WASM restricted
-      dom.deepAiProgressText.textContent = 'Using Fast Local Hybrid AI + LAB Matting';
+      dom.deepAiProgressText.textContent = 'Using Local Hybrid AI + LAB Matting';
       state.bgMode = 'hybrid';
       dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((b) => {
         b.classList.toggle('active', b.dataset.bgmode === 'hybrid');
       });
       recomputeBackgroundCutout();
       renderAll();
-      showToast('Switched to Fast Local Hybrid AI + LAB Engine');
+      showToast('Using Fast Local Hybrid AI + LAB Engine');
     } finally {
       state.deepAiRunning = false;
       dom.runDeepAiBtn.disabled = false;
@@ -492,9 +787,6 @@
     }
   }
 
-  // --------------------------------------------------------------------------
-  // 6. FAST REALTIME MEDIAPIPE + CIE-LAB TRIMAP ENGINE
-  // --------------------------------------------------------------------------
   function initMediaPipeEngine() {
     let attempts = 0;
     const tryInit = () => {
@@ -550,7 +842,15 @@
       recomputeBackgroundCutout();
       renderAll();
     }
-  }
+  } 
+
+  // ==========================================================================
+  // PART 2 OF 2:
+  // - CIE-LAB Perceptual Matting & Direct Ready-Photo Bypass
+  // - Custom Border Renderer, Realistic Suit Compositor & UPSC/SSC Slate
+  // - Auto Zero-Waste Print Sheet Engine (with 4R 8-Photo Auto-Rotation)
+  // - Lossless Uncompressed 24-Bit .TIFF Binary Encoder & All Event Listeners
+  // ==========================================================================
 
   function rgbToLab(r, g, b) {
     let rn = r / 255, gn = g / 255, bn = b / 255;
@@ -618,14 +918,15 @@
     state.compositedSubjectCanvas.height = h;
     const outCtx = state.compositedSubjectCanvas.getContext('2d');
 
-    if (state.bgMode === 'none') {
+    // If Direct Ready Photo Mode or 'Original' BG mode is active, preserve 100% of original image
+    if (state.directReadyMode || state.bgMode === 'none') {
       outCtx.clearRect(0, 0, w, h);
       outCtx.drawImage(rawSourceCanvas, 0, 0);
       applyManualBrushToSubject(outCtx, w, h);
       return;
     }
 
-    // If Ultra Deep AI (ISNet ONNX) was run and selected, use its high-precision alpha mask
+    // If Ultra Deep AI (ISNet ONNX) was run and selected
     if (state.bgMode === 'deep' && state.deepAiCutoutCanvas) {
       outCtx.clearRect(0, 0, w, h);
       outCtx.drawImage(state.deepAiCutoutCanvas, 0, 0);
@@ -903,7 +1204,7 @@
     img.src = c.toDataURL('image/png');
   }
 
-  function loadNewSourceImage(imgElement, toastMsg) {
+  function loadNewSourceImage(imgElement, toastMsg, isDirectReady = false) {
     const maxDim = 1500;
     let w = imgElement.naturalWidth || imgElement.width;
     let h = imgElement.naturalHeight || imgElement.height;
@@ -917,7 +1218,22 @@
     state.sourceWidth = w;
     state.sourceHeight = h;
     state.deepAiCutoutCanvas = null;
-    if (state.bgMode === 'deep') state.bgMode = 'hybrid';
+
+    state.directReadyMode = Boolean(isDirectReady);
+    dom.directReadyModeToggle.checked = state.directReadyMode;
+
+    if (isDirectReady) {
+      state.bgMode = 'none';
+      dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.bgmode === 'none');
+      });
+      dom.bgEngineStatus.textContent = 'Direct Ready Mode';
+    } else if (state.bgMode === 'none' || state.bgMode === 'deep') {
+      state.bgMode = 'hybrid';
+      dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.bgmode === 'hybrid');
+      });
+    }
 
     rawSourceCanvas.width = w;
     rawSourceCanvas.height = h;
@@ -930,9 +1246,13 @@
 
     autoSampleBorderWallColors();
     state.zoom = 1.0; state.panX = 0; state.panY = 0; state.rotationDeg = 0; state.quadrantRotations = 0; state.flipH = false;
+    dom.cropZoomSlider.value = '1'; dom.zoomValLabel.textContent = '100%';
+    dom.cropRotateSlider.value = '0'; dom.rotateValLabel.textContent = '0.0°';
 
     recomputeBackgroundCutout();
-    runMediaPipeOnCurrentSource();
+    if (!isDirectReady) {
+      runMediaPipeOnCurrentSource();
+    }
     renderAll();
 
     if (toastMsg) showToast(toastMsg);
@@ -974,13 +1294,13 @@
   }
 
   // --------------------------------------------------------------------------
-  // 9. RENDER PIPELINE & SHOPKEEPER TOP-HEADER PRINT SHEET COMPOSER
+  // 9. SINGLE PHOTO & CUSTOM BORDER COMPOSITOR
   // --------------------------------------------------------------------------
   function renderAll() {
-    updateMetricsBarUI();
     renderSingleCroppedPassportCanvas();
     renderInteractiveStudioStage();
     renderPrintSheetCanvas();
+    updateMetricsBarUI();
   }
 
   function updateMetricsBarUI() {
@@ -991,7 +1311,7 @@
     dom.outputPxReadout.textContent = `${widthPx} × ${heightPx} px`;
     dom.metricDocSize.textContent = `${widthMm.toFixed(1).replace(/\.0$/, '')}×${heightMm.toFixed(1).replace(/\.0$/, '')} mm`;
     dom.metricPixels.textContent = `${widthPx}×${heightPx} px @ ${state.dpi} DPI`;
-    dom.metricSheetInfo.textContent = `${paper.name} (${state.copyCount} pcs Top-Row)`;
+    dom.metricSheetInfo.textContent = `${paper.name} (${state.copyCount} pcs)`;
 
     const kb = Math.round((widthPx * heightPx * 3 + 512) / 1024);
     dom.singleFileSizeEst.textContent = kb > 1024 ? `~${(kb / 1024).toFixed(1)} MB` : `~${kb} KB`;
@@ -1006,6 +1326,7 @@
 
     ctx.clearRect(0, 0, widthPx, heightPx);
 
+    // 1. Draw Studio Backdrop Color or Radial Vignette
     if (state.bgColor !== 'transparent' && !state.compareHoldOriginal) {
       if (state.bgVignette) {
         const rad = ctx.createRadialGradient(
@@ -1021,6 +1342,7 @@
       ctx.fillRect(0, 0, widthPx, heightPx);
     }
 
+    // 2. Draw Portrait Subject
     const activeSource = state.compareHoldOriginal
       ? rawSourceCanvas
       : (state.compositedSubjectCanvas || rawSourceCanvas);
@@ -1056,6 +1378,7 @@
       }
     }
 
+    // 3. Draw Realistic Formal Suit Overlay (if selected)
     if (state.suitId !== 'none' && !state.compareHoldOriginal) {
       const suitImg = suitImageCache[state.suitId];
       if (suitImg && suitImg.complete) {
@@ -1072,6 +1395,7 @@
       }
     }
 
+    // 4. Draw UPSC / SSC Name & Date Slate (if enabled)
     if (state.enablePlacard && !state.compareHoldOriginal) {
       const slateHeight = Math.round(heightPx * 0.165);
       const slateY = heightPx - slateHeight;
@@ -1090,11 +1414,24 @@
       ctx.fillText(state.placardDate || 'DOP: DD-MM-YYYY', widthPx / 2, slateY + slateHeight * 0.74, widthPx * 0.94);
     }
 
-    // Crisp Studio Black Cut Border so shopkeepers can cut along the exact edge easily
+    // 5. Draw Custom Studio Border & Optional Inner White Frame
     if (state.enablePhotoBorder && !state.compareHoldOriginal) {
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = Math.max(2, Math.round(widthPx * 0.006));
-      ctx.strokeRect(1, 1, widthPx - 2, heightPx - 2);
+      const dpiScale = state.dpi / 300;
+      const bWidth = Math.max(1, Math.round(state.borderWidthPx * dpiScale));
+      const insetPx = Math.max(0, Math.round(state.borderInsetPx * dpiScale));
+
+      // Optional Inner White Studio Frame inside the outer cut line
+      if (insetPx > 0) {
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = insetPx * 2;
+        ctx.strokeRect(bWidth, bWidth, widthPx - bWidth * 2, heightPx - bWidth * 2);
+      }
+
+      // Outer Colored Cut Border
+      ctx.strokeStyle = state.borderColor;
+      ctx.lineWidth = bWidth;
+      const halfB = bWidth / 2;
+      ctx.strokeRect(halfB, halfB, widthPx - bWidth, heightPx - bWidth);
     }
   }
 
@@ -1167,9 +1504,7 @@
   }
 
   // --------------------------------------------------------------------------
-  // SHOPKEEPER TOP-HEADER PRINT SHEET COMPOSER
-  // Never centers vertically in the middle of the sheet! Always starts at the
-  // very top header (marginMm + topOffsetMm) so the bottom paper stays blank & reusable!
+  // 10. AUTO ZERO-WASTE PRINT SHEET ENGINE (WITH 4R 8-PHOTO ROTATION)
   // --------------------------------------------------------------------------
   function renderPrintSheetCanvas() {
     const paper = PAPER_SIZES_MM[state.paperKey];
@@ -1188,32 +1523,50 @@
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, sheetWpx, sheetHpx);
 
-    const { widthPx: tileW, heightPx: tileH } = getTargetSinglePhotoPixels();
+    const { widthPx: rawTileW, heightPx: rawTileH } = getTargetSinglePhotoPixels();
     const gapPx = Math.round((state.gapMm / 25.4) * state.dpi);
     const marginPx = Math.round((state.marginMm / 25.4) * state.dpi);
     const topOffsetPx = Math.round((state.topOffsetMm / 25.4) * state.dpi);
 
-    const availW = Math.max(tileW, sheetWpx - marginPx * 2);
-    const availH = Math.max(tileH, sheetHpx - marginPx * 2 - topOffsetPx);
+    const availW = Math.max(rawTileW, sheetWpx - marginPx * 2);
+    const availH = Math.max(rawTileH, sheetHpx - marginPx * 2 - topOffsetPx);
 
-    const cols = Math.max(1, Math.floor((availW + gapPx) / (tileW + gapPx)));
-    const rows = Math.max(1, Math.floor((availH + gapPx) / (tileH + gapPx)));
+    // Normal upright grid capacity
+    const colsUpright = Math.max(1, Math.floor((availW + gapPx) / (rawTileW + gapPx)));
+    const rowsUpright = Math.max(1, Math.floor((availH + gapPx) / (rawTileH + gapPx)));
+    const capUpright = colsUpright * rowsUpright;
+
+    // Rotated 90° tile grid capacity (Crucial on 4R 101.6x152.4mm where rotated 45x35mm fits 2x4 = 8 copies instead of 6!)
+    const colsRotated = Math.max(1, Math.floor((availW + gapPx) / (rawTileH + gapPx)));
+    const rowsRotated = Math.max(1, Math.floor((availH + gapPx) / (rawTileW + gapPx)));
+    const capRotated = colsRotated * rowsRotated;
+
+    const useRotatedTiles = state.autoFit4R8 && state.paperKey === '4r' && capRotated > capUpright;
+
+    const tileW = useRotatedTiles ? rawTileH : rawTileW;
+    const tileH = useRotatedTiles ? rawTileW : rawTileH;
+    const cols = useRotatedTiles ? colsRotated : colsUpright;
+    const rows = useRotatedTiles ? rowsRotated : rowsUpright;
     const maxCapacity = cols * rows;
 
+    state.computedSheetMetrics = { cols, rows, maxCapacity, rotatedTiles: useRotatedTiles };
+
+    // Update slider max dynamically to match paper's true zero-waste capacity
+    dom.copyCountSlider.max = String(maxCapacity);
+    dom.copyCountNumber.max = String(maxCapacity);
+
     const actualCopies = Math.min(state.copyCount, maxCapacity);
-    dom.sheetCapacityBadge.textContent = `${actualCopies} / ${maxCapacity} (${cols}/row)`;
+    dom.sheetCapacityBadge.textContent = `${actualCopies} / ${maxCapacity} Max`;
+    dom.gridFormulaLabel.textContent = `${cols} Cols × ${rows} Rows (${maxCapacity} Max)`;
 
     const usedCols = Math.min(cols, actualCopies);
     const totalRowW = usedCols * tileW + (usedCols - 1) * gapPx;
 
-    // Shopkeeper Alignment:
-    // - 'top-left': Starts strictly at top-left (marginPx) so even horizontal scrap can be saved!
-    // - 'top-center': Centers horizontally across the header while staying pinned to the TOP edge!
     const startX = state.sheetAlign === 'top-center'
       ? Math.max(marginPx, Math.round((sheetWpx - totalRowW) / 2))
       : marginPx;
 
-    // ALWAYS TOP-HEADER ALIGNED (never centered vertically in the middle of the page!)
+    // Strictly Top-Header aligned so bottom of sheet is never wasted
     const startY = marginPx + topOffsetPx;
 
     let drawn = 0;
@@ -1223,7 +1576,16 @@
       for (let c = 0; c < cols && drawn < actualCopies; c++) {
         const x = startX + c * (tileW + gapPx);
         const y = startY + r * (tileH + gapPx);
-        ctx.drawImage(dom.singleOutputCanvas, x, y, tileW, tileH);
+
+        if (useRotatedTiles) {
+          ctx.save();
+          ctx.translate(x + tileW / 2, y + tileH / 2);
+          ctx.rotate(-Math.PI / 2);
+          ctx.drawImage(dom.singleOutputCanvas, -rawTileW / 2, -rawTileH / 2, rawTileW, rawTileH);
+          ctx.restore();
+        } else {
+          ctx.drawImage(dom.singleOutputCanvas, x, y, tileW, tileH);
+        }
 
         if (state.showCropMarks) {
           drawScissorCropMarks(ctx, x, y, tileW, tileH, Math.max(5, Math.round(state.dpi * 0.03)));
@@ -1233,11 +1595,11 @@
       }
     }
 
-    // Draw a subtle horizontal "CUT HERE TO SAVE REMAINING SHEET" dashed guide below the last printed row
+    // Paper-Saver Cut Strip Guide Line
     const cutLineY = lastBottomY + Math.round((3.5 / 25.4) * state.dpi);
     if (state.showCropMarks && cutLineY < sheetHpx - 40) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.55)';
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.6)';
       ctx.lineWidth = Math.max(1, Math.round(state.dpi / 300));
       ctx.setLineDash([10, 8]);
       ctx.beginPath();
@@ -1245,20 +1607,20 @@
       ctx.lineTo(sheetWpx, cutLineY);
       ctx.stroke();
 
-      ctx.fillStyle = '#94a3b8';
+      ctx.fillStyle = '#64748b';
       ctx.font = `500 ${Math.max(10, Math.round(state.dpi * 0.032))}px "JetBrains Mono", monospace`;
       const savedMm = Math.max(0, Math.round(sheetHmm - (cutLineY / state.dpi) * 25.4));
-      ctx.fillText(`✂ CUT STRIP HERE — ${savedMm} mm of ${paper.name} remains reusable below`, marginPx + 4, cutLineY + Math.round(state.dpi * 0.045));
+      ctx.fillText(`✂ CUT STRIP HERE — ${savedMm} mm of ${paper.name} remains reusable below`, marginPx + 6, cutLineY + Math.round(state.dpi * 0.045));
       ctx.restore();
     }
 
     dom.sheetSummaryFooter.textContent =
-      `Top-Header Shopkeeper Layout: ${cols} photos per row • ${actualCopies} printed at the very top of ${paper.name} (${sheetWpx}×${sheetHpx} px @ ${state.dpi} DPI).`;
+      `Zero-Waste Layout: ${cols} per row × ${Math.ceil(actualCopies / cols)} rows (${actualCopies} photos) at top of ${paper.name} (${sheetWpx}×${sheetHpx} px @ ${state.dpi} DPI).`;
   }
 
   function drawScissorCropMarks(ctx, x, y, w, h, tickLen) {
     ctx.save();
-    ctx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
+    ctx.strokeStyle = 'rgba(51, 65, 85, 0.72)';
     ctx.lineWidth = Math.max(1, Math.round(state.dpi / 250));
     const corners = [[x, y, -1, -1], [x + w, y, 1, -1], [x, y + h, -1, 1], [x + w, y + h, 1, 1]];
     ctx.beginPath();
@@ -1271,7 +1633,7 @@
   }
 
   // --------------------------------------------------------------------------
-  // 10. LOSSLESS 24-BIT UNCOMPRESSED .TIFF BINARY ENCODER
+  // 11. LOSSLESS UNCOMPRESSED 24-BIT .TIFF BINARY ENCODER
   // --------------------------------------------------------------------------
   function encodeCanvasToLosslessTiffBlob(canvas, dpi) {
     const width = canvas.width;
@@ -1357,7 +1719,7 @@
   }
 
   // --------------------------------------------------------------------------
-  // 11. EVENT LISTENERS
+  // 12. EVENT LISTENERS (CAMERA, DIRECT PRINT, SUITS, BORDERS & ZERO-WASTE)
   // --------------------------------------------------------------------------
   function bindEventListeners() {
     document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -1366,25 +1728,28 @@
 
     dom.mobileToolTabs.querySelectorAll('.subtab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        dom.mobileToolTabs.querySelectorAll('.subtab-btn').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const targetId = btn.dataset.panel;
-        state.activePanelId = targetId;
-        document.querySelectorAll('.tool-section').forEach((sec) => {
-          sec.classList.toggle('active', sec.id === targetId);
-        });
-
-        if (targetId === 'panel-sheet') {
-          switchWorkspace('print');
-        } else if (state.workspace === 'print') {
-          switchWorkspace('studio');
-        } else {
-          renderInteractiveStudioStage();
-        }
+        activateToolTab(btn.dataset.panel);
       });
     });
 
+    // Live Camera Modal Listeners
+    dom.openCameraModalBtn.addEventListener('click', () => startLiveCamera());
+    dom.closeCameraModalBtn.addEventListener('click', () => {
+      stopLiveCamera();
+      dom.cameraModal.classList.add('hidden');
+    });
+    dom.switchCameraBtn.addEventListener('click', () => {
+      cameraFacingMode = cameraFacingMode === 'user' ? 'environment' : 'user';
+      cameraMirrored = cameraFacingMode === 'user';
+      startLiveCamera();
+    });
+    dom.mirrorCameraBtn.addEventListener('click', () => {
+      cameraMirrored = !cameraMirrored;
+      dom.cameraVideoEl.classList.toggle('unmirrored', !cameraMirrored);
+    });
+    dom.capturePhotoBtn.addEventListener('click', () => captureFrameFromLiveCamera());
+
+    // Standard Upload vs Direct Print (Ready Photo) Upload
     dom.loadSampleBtn.addEventListener('click', () => generateHighResStudioSamplePortrait());
 
     dom.photoUploadInput.addEventListener('change', (e) => {
@@ -1393,20 +1758,47 @@
       const reader = new FileReader();
       reader.onload = (ev) => {
         const img = new Image();
-        img.onload = () => loadNewSourceImage(img, `Loaded ${file.name}`);
+        img.onload = () => {
+          loadNewSourceImage(img, `Loaded ${file.name}`, false);
+          switchWorkspace('studio');
+        };
         img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     });
 
-    // Run Ultra-HD ISNet ONNX Deep AI Cutout Button
-    dom.runDeepAiBtn.addEventListener('click', () => {
-      runUltraDeepAiCutout();
+    // 1-Click Direct Print Ready Photo Bypass
+    dom.directPrintUploadInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          loadNewSourceImage(img, `Ready Photo Loaded Directly to Print Sheet!`, true);
+          activateToolTab('panel-sheet');
+          switchWorkspace('print');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
     });
+
+    dom.directReadyModeToggle.addEventListener('change', () => {
+      state.directReadyMode = dom.directReadyModeToggle.checked;
+      recomputeBackgroundCutout();
+      renderAll();
+      showToast(state.directReadyMode ? 'Direct Ready Mode ON (Original BG kept)' : 'AI Background Cutout Active');
+    });
+
+    // Deep AI & Cutout Controls
+    dom.runDeepAiBtn.addEventListener('click', () => runUltraDeepAiCutout());
 
     dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         const mode = btn.dataset.bgmode;
+        state.directReadyMode = (mode === 'none');
+        dom.directReadyModeToggle.checked = state.directReadyMode;
         if (mode === 'deep' && !state.deepAiCutoutCanvas) {
           runUltraDeepAiCutout();
           return;
@@ -1420,6 +1812,8 @@
     });
 
     dom.reRunAiBtn.addEventListener('click', () => {
+      state.directReadyMode = false;
+      dom.directReadyModeToggle.checked = false;
       autoSampleBorderWallColors();
       runMediaPipeOnCurrentSource();
       recomputeBackgroundCutout();
@@ -1436,36 +1830,31 @@
     dom.bgToleranceSlider.addEventListener('input', () => {
       state.tolerance = parseInt(dom.bgToleranceSlider.value, 10);
       dom.toleranceValLabel.textContent = state.tolerance;
-      recomputeBackgroundCutout();
-      renderAll();
+      recomputeBackgroundCutout(); renderAll();
     });
 
     dom.aiConfidenceSlider.addEventListener('input', () => {
       state.aiConfidence = parseInt(dom.aiConfidenceSlider.value, 10);
       dom.aiConfidenceValLabel.textContent = `${state.aiConfidence}%`;
-      recomputeBackgroundCutout();
-      renderAll();
+      recomputeBackgroundCutout(); renderAll();
     });
 
     dom.bgFeatherSlider.addEventListener('input', () => {
       state.featherPx = parseFloat(dom.bgFeatherSlider.value);
       dom.featherValLabel.textContent = `${state.featherPx.toFixed(1)} px`;
-      recomputeBackgroundCutout();
-      renderAll();
+      recomputeBackgroundCutout(); renderAll();
     });
 
     dom.bgChokeSlider.addEventListener('input', () => {
       state.chokePx = parseInt(dom.bgChokeSlider.value, 10);
       dom.chokeValLabel.textContent = state.chokePx;
-      recomputeBackgroundCutout();
-      renderAll();
+      recomputeBackgroundCutout(); renderAll();
     });
 
     dom.bgSpillSlider.addEventListener('input', () => {
       state.spillSuppression = parseInt(dom.bgSpillSlider.value, 10);
       dom.spillValLabel.textContent = `${state.spillSuppression}%`;
-      recomputeBackgroundCutout();
-      renderAll();
+      recomputeBackgroundCutout(); renderAll();
     });
 
     dom.brushModeGroup.querySelectorAll('.seg-btn').forEach((btn) => {
@@ -1491,8 +1880,7 @@
     dom.resetBrushMaskBtn.addEventListener('click', () => {
       if (state.userBrushCanvas) {
         state.userBrushCanvas.getContext('2d').clearRect(0, 0, state.userBrushCanvas.width, state.userBrushCanvas.height);
-        recomputeBackgroundCutout();
-        renderAll();
+        recomputeBackgroundCutout(); renderAll();
         showToast('Manual brush strokes cleared');
       }
     });
@@ -1507,7 +1895,7 @@
           dom.customBgColorPicker.value = col;
           dom.customBgHexInput.value = col;
         }
-        if (state.bgMode === 'none') {
+        if (state.bgMode === 'none' && !state.directReadyMode) {
           state.bgMode = 'hybrid';
           dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((b) => {
             b.classList.toggle('active', b.dataset.bgmode === 'hybrid');
@@ -1521,13 +1909,6 @@
     dom.customBgColorPicker.addEventListener('input', () => {
       state.bgColor = dom.customBgColorPicker.value;
       dom.customBgHexInput.value = state.bgColor.toUpperCase();
-      if (state.bgMode === 'none') {
-        state.bgMode = 'hybrid';
-        dom.bgModeTabs.querySelectorAll('.seg-btn').forEach((b) => {
-          b.classList.toggle('active', b.dataset.bgmode === 'hybrid');
-        });
-        recomputeBackgroundCutout();
-      }
       renderAll();
     });
 
@@ -1545,7 +1926,43 @@
       renderAll();
     });
 
-    // Suit Overlay Controls
+    // Realistic Formal Suit Studio Listeners (Male / Female Filter + Custom PNG Upload)
+    dom.suitCategoryTabs.querySelectorAll('.seg-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        dom.suitCategoryTabs.querySelectorAll('.seg-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.suitCategory = btn.dataset.suitcat;
+        buildSuitCatalogUI();
+      });
+    });
+
+    dom.customSuitUploadInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const customId = `custom_suit_${Date.now()}`;
+          suitImageCache[customId] = img;
+          FORMAL_SUITS.splice(1, 0, {
+            id: customId,
+            category: 'all',
+            name: file.name.replace(/\.[^.]+$/, '').slice(0, 18),
+            isCustomPng: true,
+            pngUrl: ev.target.result
+          });
+          state.suitId = customId;
+          buildSuitCatalogUI();
+          dom.activeSuitBadge.textContent = 'Custom PNG Suit';
+          renderAll();
+          showToast('👔 Custom Transparent PNG Suit Added!');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
     dom.dragSuitModeToggle.addEventListener('change', () => {
       state.dragSuitOnCanvas = dom.dragSuitModeToggle.checked;
     });
@@ -1651,7 +2068,42 @@
       renderAll();
     });
 
-    // Retouch
+    // Custom Border Studio Controls
+    dom.enablePhotoBorder.addEventListener('change', () => {
+      state.enablePhotoBorder = dom.enablePhotoBorder.checked;
+      dom.borderControlsWrap.classList.toggle('hidden', !state.enablePhotoBorder);
+      renderAll();
+    });
+
+    document.querySelectorAll('.border-color-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.border-color-chip').forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.borderColor = chip.dataset.bcolor;
+        dom.photoBorderColorPicker.value = state.borderColor;
+        renderAll();
+      });
+    });
+
+    dom.photoBorderColorPicker.addEventListener('input', () => {
+      state.borderColor = dom.photoBorderColorPicker.value;
+      document.querySelectorAll('.border-color-chip').forEach((c) => c.classList.remove('active'));
+      renderAll();
+    });
+
+    dom.photoBorderWidthSlider.addEventListener('input', () => {
+      state.borderWidthPx = parseInt(dom.photoBorderWidthSlider.value, 10);
+      dom.borderWidthValLabel.textContent = `${state.borderWidthPx} px`;
+      renderAll();
+    });
+
+    dom.photoBorderInsetSlider.addEventListener('input', () => {
+      state.borderInsetPx = parseInt(dom.photoBorderInsetSlider.value, 10);
+      dom.borderInsetValLabel.textContent = `${state.borderInsetPx} px`;
+      renderAll();
+    });
+
+    // Retouch & Slate
     const updateRetouch = () => {
       state.brightness = parseInt(dom.brightnessSlider.value, 10);
       state.contrast = parseInt(dom.contrastSlider.value, 10);
@@ -1673,6 +2125,14 @@
       dom.contrastSlider.value = '104';
       dom.saturationSlider.value = '100';
       dom.warmthSlider.value = '0';
+      state.borderColor = '#0f172a';
+      state.borderWidthPx = 3;
+      state.borderInsetPx = 0;
+      dom.photoBorderColorPicker.value = '#0f172a';
+      dom.photoBorderWidthSlider.value = '3';
+      dom.photoBorderInsetSlider.value = '0';
+      dom.borderWidthValLabel.textContent = '3 px';
+      dom.borderInsetValLabel.textContent = '0 px';
       updateRetouch();
     });
 
@@ -1684,15 +2144,54 @@
     dom.placardNameInput.addEventListener('input', () => { state.placardName = dom.placardNameInput.value; renderAll(); });
     dom.placardDateInput.addEventListener('input', () => { state.placardDate = dom.placardDateInput.value; renderAll(); });
     dom.useTodayDateBtn.addEventListener('click', () => { initDefaultDate(); renderAll(); });
-    dom.enablePhotoBorder.addEventListener('change', () => { state.enablePhotoBorder = dom.enablePhotoBorder.checked; renderAll(); });
 
     dom.compareOriginalBtn.addEventListener('pointerdown', () => { state.compareHoldOriginal = true; renderAll(); });
     window.addEventListener('pointerup', () => { if (state.compareHoldOriginal) { state.compareHoldOriginal = false; renderAll(); } });
 
-    // Shopkeeper Print Sheet Controls
+    // Zero-Waste Print Sheet Controls
+    const setCopyCount = (n) => {
+      const maxCap = state.computedSheetMetrics.maxCapacity || 60;
+      const clamped = Math.max(1, Math.min(maxCap, n));
+      state.copyCount = clamped;
+      dom.copyCountSlider.value = String(clamped);
+      dom.copyCountNumber.value = String(clamped);
+      dom.copyCountValLabel.textContent = `${clamped} ${clamped === 1 ? 'Copy' : 'Copies'}`;
+      renderAll();
+    };
+
     dom.paperSizeSelect.addEventListener('change', () => {
       state.paperKey = dom.paperSizeSelect.value;
-      renderAll();
+      renderPrintSheetCanvas();
+      // Automatically set copyCount to 1 Full Row on A4 (6) or Full 4R Sheet (8) so zero waste happens
+      const { cols, maxCapacity } = state.computedSheetMetrics;
+      if (state.paperKey === '4r') {
+        setCopyCount(maxCapacity);
+      } else {
+        setCopyCount(cols);
+      }
+    });
+
+    dom.autoFit4R8Toggle.addEventListener('change', () => {
+      state.autoFit4R8 = dom.autoFit4R8Toggle.checked;
+      renderPrintSheetCanvas();
+      if (state.paperKey === '4r') {
+        setCopyCount(state.computedSheetMetrics.maxCapacity);
+      }
+    });
+
+    dom.fillOneRowBtn.addEventListener('click', () => {
+      setCopyCount(state.computedSheetMetrics.cols);
+    });
+    dom.fillTwoRowsBtn.addEventListener('click', () => {
+      setCopyCount(state.computedSheetMetrics.cols * 2);
+    });
+    dom.fillHalfSheetBtn.addEventListener('click', () => {
+      const { cols, rows } = state.computedSheetMetrics;
+      setCopyCount(cols * Math.max(1, Math.floor(rows / 2)));
+    });
+    dom.fillMaxSheetBtn.addEventListener('click', () => {
+      setCopyCount(state.computedSheetMetrics.maxCapacity);
+      showToast(`Filled ${state.computedSheetMetrics.maxCapacity} copies for Zero Paper Waste!`);
     });
 
     dom.sheetAlignGroup.querySelectorAll('.seg-btn').forEach((btn) => {
@@ -1713,23 +2212,8 @@
       });
     });
 
-    const setCopyCount = (n) => {
-      const clamped = Math.max(1, Math.min(54, n));
-      state.copyCount = clamped;
-      dom.copyCountSlider.value = String(clamped);
-      dom.copyCountNumber.value = String(clamped);
-      dom.copyCountValLabel.textContent = `${clamped} ${clamped === 1 ? 'Copy' : 'Copies'}`;
-      renderAll();
-    };
     dom.copyCountSlider.addEventListener('input', () => setCopyCount(parseInt(dom.copyCountSlider.value, 10)));
     dom.copyCountNumber.addEventListener('input', () => setCopyCount(parseInt(dom.copyCountNumber.value, 10) || 1));
-
-    document.querySelectorAll('.copy-preset-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const copies = parseInt(btn.dataset.copies, 10);
-        setCopyCount(copies);
-      });
-    });
 
     dom.sheetGapSlider.addEventListener('input', () => {
       state.gapMm = parseFloat(dom.sheetGapSlider.value);
@@ -1754,7 +2238,7 @@
       renderPrintSheetCanvas();
     });
 
-    // Exports & Direct Shop Printer
+    // Exact 1:1 Millimeter Direct Shop Printer & Lossless .TIFF Exports
     dom.downloadSheetTiffBtn.addEventListener('click', () => {
       renderPrintSheetCanvas();
       const blob = encodeCanvasToLosslessTiffBlob(dom.printSheetCanvas, state.dpi);
@@ -1771,10 +2255,21 @@
 
     dom.printSheetDirectBtn.addEventListener('click', () => {
       renderPrintSheetCanvas();
+      const paper = PAPER_SIZES_MM[state.paperKey];
+      const isLandscape = state.paperOrientation === 'landscape';
+      const wMm = isLandscape ? paper.heightMm : paper.widthMm;
+      const hMm = isLandscape ? paper.widthMm : paper.heightMm;
+
       const dataUrl = dom.printSheetCanvas.toDataURL('image/png');
       const win = window.open('', '_blank');
       if (!win) { showToast('Allow popups to use Direct Print'); return; }
-      win.document.write(`<!DOCTYPE html><html><head><title>Print AuraID Customer Strip</title><style>@page{margin:0;}body{margin:0;padding:0;}img{width:100%;height:auto;display:block;}</style></head><body onload="window.print();"><img src="${dataUrl}"/></body></html>`);
+      win.document.write(`<!DOCTYPE html><html><head><title>Print AuraID Exact Scale (${wMm}x${hMm}mm)</title>
+        <style>
+          @page { size: ${wMm}mm ${hMm}mm; margin: 0mm; }
+          html, body { margin: 0; padding: 0; width: ${wMm}mm; height: ${hMm}mm; overflow: hidden; background: #fff; }
+          img { width: ${wMm}mm; height: ${hMm}mm; display: block; }
+        </style>
+        </head><body onload="setTimeout(()=>{window.print();},250);"><img src="${dataUrl}"/></body></html>`);
       win.document.close();
     });
 
@@ -1798,6 +2293,24 @@
 
     bindStageCanvasGestures();
     window.addEventListener('resize', () => renderInteractiveStudioStage());
+  }
+
+  function activateToolTab(targetId) {
+    state.activePanelId = targetId;
+    dom.mobileToolTabs.querySelectorAll('.subtab-btn').forEach((b) => {
+      b.classList.toggle('active', b.dataset.panel === targetId);
+    });
+    document.querySelectorAll('.tool-section').forEach((sec) => {
+      sec.classList.toggle('active', sec.id === targetId);
+    });
+
+    if (targetId === 'panel-sheet') {
+      switchWorkspace('print');
+    } else if (state.workspace === 'print') {
+      switchWorkspace('studio');
+    } else {
+      renderInteractiveStudioStage();
+    }
   }
 
   function switchWorkspace(ws) {
@@ -1867,7 +2380,9 @@
           dom.sampledWallSwatch.style.backgroundColor = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
           state.isPickingWallColor = false;
           dom.canvasModeBanner.classList.add('hidden');
-          if (state.bgMode === 'deep') state.bgMode = 'hybrid';
+          state.directReadyMode = false;
+          dom.directReadyModeToggle.checked = false;
+          if (state.bgMode === 'deep' || state.bgMode === 'none') state.bgMode = 'hybrid';
           recomputeBackgroundCutout();
           renderAll();
           showToast('Sampled wall color & updated edge cutout');

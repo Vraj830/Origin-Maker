@@ -1,38 +1,41 @@
 /* ==========================================================================
-   AuraID Studio Pro v4.0 — Ultra-Translucent Glassmorphism & Fixed Scrolling
+   AuraID Studio Pro v5.0 — Matte Frosted Glassmorphism & PC/Mobile Layout
    ========================================================================== */
 
 :root {
-  --bg-deep: #040711;
-  --glass-bg: rgba(15, 23, 42, 0.34);
-  --glass-card: rgba(30, 41, 59, 0.36);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-border-bright: rgba(255, 255, 255, 0.34);
+  --bg-deep: #060913;
+  --matte-surface: rgba(18, 26, 44, 0.42);
+  --matte-card: rgba(30, 41, 66, 0.38);
+  --matte-elevated: rgba(40, 54, 85, 0.46);
+  --matte-border: rgba(255, 255, 255, 0.16);
+  --matte-border-top: rgba(255, 255, 255, 0.32);
   --text-main: #f8fafc;
   --text-muted: #cbd5e1;
   --accent-primary: #38bdf8;
   --accent-secondary: #818cf8;
-  --accent-emerald: #34d399;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 9px;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --shadow-glass: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+  --shadow-matte: 0 20px 50px rgba(0, 0, 0, 0.48), inset 0 1px 0 0 var(--matte-border-top);
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Guaranteed Unlocked Page & Panel Scrolling */
 html, body {
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto !important;
+  scroll-behavior: smooth;
   background-color: var(--bg-deep);
   color: var(--text-main);
   font-family: var(--font-sans);
@@ -54,7 +57,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Vibrant Aurora Mesh Background (Visible Through Translucent Glass)
+   Ambient Aurora Backdrop + Tactile Matte Grain Texture
    ========================================================================== */
 .ambient-canvas {
   position: fixed;
@@ -62,69 +65,67 @@ html, body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 10%, #0f172a 0%, #030610 100%);
+  background: radial-gradient(circle at 50% 0%, #111a2e 0%, #050811 100%);
 }
 
 .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.65;
-  animation: floatAurora 18s infinite alternate ease-in-out;
+  filter: blur(85px);
+  opacity: 0.62;
+  animation: floatAurora 20s infinite alternate ease-in-out;
 }
 
 .blob-1 {
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(circle, #06b6d4, #2563eb);
-  top: -100px;
-  left: -80px;
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(circle, #0ea5e9, #2563eb);
+  top: -120px;
+  left: -90px;
 }
 
 .blob-2 {
-  width: 560px;
-  height: 560px;
-  background: radial-gradient(circle, #8b5cf6, #ec4899);
-  bottom: -140px;
-  right: -80px;
-  animation-delay: -5s;
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, #6366f1, #a855f7);
+  bottom: -150px;
+  right: -90px;
+  animation-delay: -6s;
 }
 
 .blob-3 {
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, #10b981, #0ea5e9);
-  top: 32%;
-  left: 35%;
-  opacity: 0.45;
-  animation-delay: -11s;
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, #10b981, #06b6d4);
+  top: 34%;
+  left: 36%;
+  opacity: 0.42;
+  animation-delay: -12s;
 }
 
-.blob-4 {
-  width: 340px;
-  height: 340px;
-  background: radial-gradient(circle, #f59e0b, #ef4444);
-  bottom: 12%;
-  left: 12%;
-  opacity: 0.32;
-  animation-delay: -8s;
+/* Fine SVG Matte Acrylic Noise Overlay */
+.matte-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @keyframes floatAurora {
   0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(45px, -35px) scale(1.08); }
-  100% { transform: translate(-35px, 40px) scale(0.94); }
+  50% { transform: translate(40px, -30px) scale(1.07); }
+  100% { transform: translate(-30px, 35px) scale(0.95); }
 }
 
 /* ==========================================================================
-   True Translucent Frosted Glassmorphism Surface
+   Core Matte Frosted Glass Surface
    ========================================================================== */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(28px) saturate(210%);
-  -webkit-backdrop-filter: blur(28px) saturate(210%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-glass);
+.matte-glass {
+  background: var(--matte-surface);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid var(--matte-border);
+  box-shadow: var(--shadow-matte);
 }
 
 .app-shell {
@@ -132,17 +133,17 @@ html, body {
   z-index: 5;
   max-width: 1640px;
   margin: 0 auto;
-  padding: 10px 14px 28px;
+  padding: 10px 14px 32px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 /* ==========================================================================
-   Top App Bar
+   Top Header Bar
    ========================================================================== */
 .app-header {
-  padding: 8px 16px;
+  padding: 9px 16px;
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -166,6 +167,7 @@ html, body {
   display: grid;
   place-items: center;
   color: #7dd3fc;
+  flex-shrink: 0;
 }
 
 .brand-title {
@@ -191,12 +193,13 @@ html, body {
   color: var(--text-muted);
 }
 
+/* Workspace Tabs */
 .workspace-tabs {
   display: flex;
-  background: rgba(7, 11, 22, 0.45);
+  background: rgba(8, 12, 24, 0.52);
   padding: 4px;
   border-radius: 12px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--matte-border);
   gap: 5px;
 }
 
@@ -230,16 +233,17 @@ html, body {
 .tab-btn.active {
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(99, 102, 241, 0.32));
   color: #fff;
-  border-color: rgba(56, 189, 248, 0.55);
+  border-color: rgba(56, 189, 248, 0.58);
   box-shadow: 0 4px 14px rgba(56, 189, 248, 0.22);
 }
 
 .tab-btn.active .step-dot {
   background: var(--accent-primary);
-  color: #040711;
+  color: #060913;
   font-weight: 700;
 }
 
+/* Quick-Entry Header Buttons */
 .header-actions {
   display: flex;
   align-items: center;
@@ -247,45 +251,42 @@ html, body {
   flex-wrap: wrap;
 }
 
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-family: var(--font-mono);
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(16, 185, 129, 0.18);
-  border: 1px solid rgba(52, 211, 153, 0.45);
-  color: #6ee7b7;
+.btn-camera {
+  background: rgba(16, 185, 129, 0.22) !important;
+  border-color: rgba(52, 211, 153, 0.5) !important;
+  color: #a7f3d0 !important;
 }
 
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
+.btn-camera:hover {
+  background: rgba(16, 185, 129, 0.34) !important;
+}
+
+.btn-direct {
+  background: rgba(245, 158, 11, 0.22) !important;
+  border-color: rgba(251, 191, 36, 0.5) !important;
+  color: #fde68a !important;
+}
+
+.btn-direct:hover {
+  background: rgba(245, 158, 11, 0.34) !important;
 }
 
 /* ==========================================================================
-   Main Split Grid (Left Sidebar + Right Stage)
+   Main Split Grid (Left Scrollable Controls + Right Stage)
    ========================================================================== */
 .app-layout {
   display: grid;
-  grid-template-columns: 410px 1fr;
+  grid-template-columns: 420px 1fr;
   gap: 14px;
   align-items: start;
 }
 
-/* ==========================================================================
-   Left Controls Sidebar with Guaranteed Mouse-Wheel Scrollbar
-   ========================================================================== */
 .controls-sidebar {
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   height: calc(100vh - 96px);
-  min-height: 540px;
+  min-height: 560px;
   overflow: hidden;
 }
 
@@ -294,8 +295,8 @@ html, body {
   grid-template-columns: repeat(5, 1fr);
   gap: 4px;
   padding: 8px;
-  background: rgba(7, 11, 22, 0.48);
-  border-bottom: 1px solid var(--glass-border);
+  background: rgba(8, 12, 24, 0.52);
+  border-bottom: 1px solid var(--matte-border);
   flex-shrink: 0;
 }
 
@@ -322,23 +323,23 @@ html, body {
 }
 
 .subtab-btn.active {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(99, 102, 241, 0.28));
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.34), rgba(99, 102, 241, 0.3));
   color: #fff;
-  border-color: rgba(56, 189, 248, 0.6);
-  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.22);
 }
 
-/* High-Visibility Custom Scrollbar inside Sidebar */
+/* Smooth Visible Scrollbar inside Sidebar */
 .sidebar-scroll {
   flex: 1 1 auto;
   overflow-y: scroll !important;
   overflow-x: hidden;
-  padding: 14px 14px 48px;
+  padding: 14px 14px 52px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 13px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(56, 189, 248, 0.6) rgba(15, 23, 42, 0.3);
+  scrollbar-color: rgba(56, 189, 248, 0.65) rgba(15, 23, 42, 0.3);
 }
 
 .sidebar-scroll::-webkit-scrollbar {
@@ -346,7 +347,7 @@ html, body {
 }
 
 .sidebar-scroll::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.35);
+  background: rgba(15, 23, 42, 0.32);
   border-radius: 8px;
 }
 
@@ -394,16 +395,37 @@ html, body {
   color: #bae6fd;
 }
 
-/* Deep Learning AI Hero Card */
+/* Cards & Notes */
+.sub-card {
+  background: var(--matte-card);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  padding: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.highlight-card {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.16), rgba(14, 165, 233, 0.16));
+  border-color: rgba(52, 211, 153, 0.42);
+}
+
+.tiny-note {
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
 .ai-hero-card {
-  background: linear-gradient(145deg, rgba(14, 165, 233, 0.22), rgba(99, 102, 241, 0.22));
-  border: 1px solid rgba(56, 189, 248, 0.5);
+  background: linear-gradient(145deg, rgba(14, 165, 233, 0.24), rgba(99, 102, 241, 0.24));
+  border: 1px solid rgba(56, 189, 248, 0.52);
   border-radius: var(--radius-md);
   padding: 11px;
   display: flex;
   flex-direction: column;
   gap: 9px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .ai-hero-card h3 {
@@ -433,7 +455,7 @@ html, body {
 }
 
 .ai-progress-fill {
-  width: 12%;
+  width: 15%;
   height: 100%;
   background: linear-gradient(90deg, #38bdf8, #34d399);
   transition: width 0.2s ease;
@@ -461,35 +483,29 @@ html, body {
 .helper-note {
   font-size: 11.5px;
   color: #e2e8f0;
-  background: rgba(15, 23, 42, 0.42);
+  background: rgba(15, 23, 42, 0.45);
   border-left: 3px solid var(--accent-primary);
   padding: 8px 10px;
   border-radius: 0 8px 8px 0;
 }
 
-/* Sub-Cards with Translucent Acrylic Feel */
-.sub-card {
-  background: var(--glass-card);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: var(--radius-md);
-  padding: 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-/* Formal Suit Grid */
+/* ==========================================================================
+   Photorealistic Attire Catalog Grid (Male & Female)
+   ========================================================================== */
 .suit-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+  max-height: 290px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
 }
 
 .suit-card {
-  background: rgba(15, 23, 42, 0.45);
-  border: 1.5px solid var(--glass-border);
-  border-radius: 11px;
+  background: rgba(15, 23, 42, 0.52);
+  border: 1.5px solid var(--matte-border);
+  border-radius: 12px;
   padding: 8px 6px;
   display: flex;
   flex-direction: column;
@@ -501,26 +517,31 @@ html, body {
 }
 
 .suit-card:hover {
-  border-color: rgba(56, 189, 248, 0.6);
-  background: rgba(30, 41, 59, 0.55);
+  border-color: rgba(56, 189, 248, 0.65);
+  background: rgba(30, 41, 66, 0.65);
+  transform: translateY(-1px);
 }
 
 .suit-card.active {
   border-color: var(--accent-primary);
-  background: rgba(56, 189, 248, 0.24);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.32);
 }
 
 .suit-thumb {
-  width: 52px;
-  height: 48px;
+  width: 64px;
+  height: 56px;
   display: grid;
   place-items: center;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 70%);
+  border-radius: 8px;
 }
 
-.suit-thumb svg {
+.suit-thumb svg,
+.suit-thumb img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
   overflow: visible;
 }
 
@@ -531,12 +552,14 @@ html, body {
   line-height: 1.2;
 }
 
-/* Inputs, Selects & Buttons */
+/* ==========================================================================
+   Controls, Sliders, Swatches & Border Chips
+   ========================================================================== */
 .glass-select,
 .glass-input {
   width: 100%;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid var(--glass-border);
+  background: rgba(15, 23, 42, 0.58);
+  border: 1px solid var(--matte-border);
   color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 12.5px;
@@ -561,7 +584,7 @@ html, body {
   justify-content: center;
   gap: 6px;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--matte-border);
   color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 12px;
@@ -575,12 +598,12 @@ html, body {
 
 .glass-btn:hover {
   background: rgba(255, 255, 255, 0.18);
-  border-color: var(--glass-border-bright);
+  border-color: var(--matte-border-top);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.9), rgba(79, 70, 229, 0.9));
-  border-color: rgba(125, 211, 252, 0.6);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.92), rgba(79, 70, 229, 0.92));
+  border-color: rgba(125, 211, 252, 0.65);
   color: #fff;
   box-shadow: 0 6px 18px rgba(14, 165, 233, 0.32);
 }
@@ -640,10 +663,10 @@ html, body {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  background: rgba(7, 11, 22, 0.55);
+  background: rgba(8, 12, 24, 0.58);
   padding: 3px;
   border-radius: 9px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--matte-border);
   gap: 3px;
 }
 
@@ -660,9 +683,9 @@ html, body {
 }
 
 .seg-btn.active {
-  background: rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.32);
   color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.58);
 }
 
 .slider-group {
@@ -690,7 +713,7 @@ input[type="range"] {
   width: 100%;
   height: 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.22);
   outline: none;
 }
 
@@ -753,6 +776,20 @@ input[type="range"]::-webkit-slider-thumb {
   background-color: #cbd5e1;
 }
 
+/* Custom Border Color Chips */
+.border-color-chip {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+}
+
+.border-color-chip.active {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45);
+}
+
 .custom-color-row {
   display: flex;
   align-items: center;
@@ -767,10 +804,10 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="color"] {
-  width: 34px;
-  height: 30px;
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
+  width: 32px;
+  height: 28px;
+  border: 1px solid var(--matte-border);
+  border-radius: 7px;
   background: none;
   cursor: pointer;
 }
@@ -793,7 +830,7 @@ input[type="color"] {
 .placard-fields {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .copy-count-controls {
@@ -809,8 +846,8 @@ input[type="color"] {
 }
 
 .export-box {
-  background: linear-gradient(155deg, rgba(14, 165, 233, 0.2), rgba(99, 102, 241, 0.2));
-  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: linear-gradient(155deg, rgba(14, 165, 233, 0.22), rgba(99, 102, 241, 0.22));
+  border: 1px solid rgba(56, 189, 248, 0.48);
   border-radius: var(--radius-md);
   padding: 12px;
   display: flex;
@@ -832,12 +869,12 @@ input[type="color"] {
 
 .glass-divider {
   border: none;
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid var(--matte-border);
   margin: 4px 0;
 }
 
 /* ==========================================================================
-   Right Stage Viewport & Top-Aligned Print Sheet Preview
+   Right Stage Viewport & Zero-Waste Print Sheet Preview
    ========================================================================== */
 .studio-stage {
   display: flex;
@@ -866,6 +903,12 @@ input[type="color"] {
 
 .metric-sep {
   color: rgba(255, 255, 255, 0.28);
+}
+
+.stage-view-toggles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .workspace-view {
@@ -958,7 +1001,6 @@ input[type="color"] {
   pointer-events: none;
 }
 
-/* Scrollable Print Sheet Viewport */
 .sheet-canvas-scroll {
   width: 100%;
   height: 100%;
@@ -968,7 +1010,7 @@ input[type="color"] {
   align-items: flex-start;
   padding: 18px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(56, 189, 248, 0.6) rgba(15, 23, 42, 0.3);
+  scrollbar-color: rgba(56, 189, 248, 0.65) rgba(15, 23, 42, 0.3);
 }
 
 #printSheetCanvas {
@@ -986,12 +1028,96 @@ input[type="color"] {
   padding: 2px 8px;
 }
 
+/* ==========================================================================
+   Live Camera Capture Modal
+   ========================================================================== */
+.camera-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(4, 7, 17, 0.78);
+  backdrop-filter: blur(14px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.camera-dialog {
+  width: 100%;
+  max-width: 540px;
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.camera-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.camera-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.camera-header p {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.camera-viewport-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 35 / 45;
+  max-height: 62vh;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--matte-border-top);
+}
+
+#cameraVideoEl {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+#cameraVideoEl.unmirrored {
+  transform: scaleX(1);
+}
+
+.camera-guide-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.camera-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.camera-controls-bar > .glass-btn {
+  flex: 1;
+}
+
+/* Toast Notifications */
 .toast-container {
   position: fixed;
   bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 120;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -999,7 +1125,7 @@ input[type="color"] {
 }
 
 .toast {
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(56, 189, 248, 0.55);
   color: #fff;
@@ -1031,11 +1157,39 @@ input[type="color"] {
 
   .sidebar-scroll {
     overflow-y: visible !important;
+    padding-bottom: 36px;
   }
 
   .canvas-stage-wrapper,
   .sheet-stage-wrapper {
     height: 360px;
     min-height: 320px;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-subtitle {
+    display: none;
+  }
+
+  .workspace-tabs {
+    width: 100%;
+    order: 3;
+  }
+
+  .tab-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .header-actions > .glass-btn {
+    flex: 1;
+    padding: 7px 8px;
+    font-size: 11px;
   }
 }
